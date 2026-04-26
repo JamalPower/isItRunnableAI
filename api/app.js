@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
+
 const { analyzeHardware, analyzePerformance } = require('../APIs/gemini-api');
 const port = 3000;
 
