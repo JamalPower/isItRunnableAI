@@ -17,7 +17,6 @@ async function callGroq(prompt) {
 }
 
 async function analyzeHardware(specs) {
-    // Make sure you have the correct model name (gemini-1.5-flash is generally stable, but let's stick with what you put)
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `
@@ -62,7 +61,6 @@ async function analyzeHardware(specs) {
         const response = await result.response;
         const text = await response.text();
         
-        // Clean markdown blocks if the model wrapped the JSON
         const cleanedText = text.replace(/```json/g, "").replace(/```/g, "").trim();
         return JSON.parse(cleanedText);
     } catch (error) {
@@ -88,7 +86,6 @@ async function analyzeHardware(specs) {
     }
 }
 async function analyzePerformance(specs) {
-    // Make sure you have the correct model name (gemini-1.5-flash is generally stable, but let's stick with what you put)
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `
@@ -132,8 +129,6 @@ async function analyzePerformance(specs) {
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = await response.text();
-        
-        // Clean markdown blocks if the model wrapped the JSON
         const cleanedText = text.replace(/```json/g, "").replace(/```/g, "").trim();
         return JSON.parse(cleanedText);
     } catch (error) {
