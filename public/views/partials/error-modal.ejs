@@ -1,0 +1,32 @@
+<!-- Error Modal Component -->
+<div id="errorModal" class="modal-overlay hidden" onclick="this.classList.add('hidden')">
+    <div class="modal-content error-modal" onclick="event.stopPropagation()">
+        <div class="modal-header error-header">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <h2>Oops! Something Went Wrong</h2>
+        </div>
+        <div class="modal-body">
+            <p id="errorMessage" class="error-message">An unexpected error occurred. Please try again.</p>
+            <p id="errorDetails" class="error-details"></p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="document.getElementById('errorModal').classList.add('hidden')">
+                <i class="fa-solid fa-xmark"></i> Close
+            </button>
+            <button id="retryBtn" class="btn-primary" style="display: none;">
+                <i class="fa-solid fa-redo"></i> Retry
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Success Toast -->
+<div id="successToast" class="toast-notification success-toast hidden">
+    <div class="toast-content">
+        <i class="fa-solid fa-check-circle"></i>
+        <div>
+            <strong id="toastTitle">Success!</strong>
+            <p id="toastMessage">Operation completed successfully.</p>
+        </div>
+    </div>
+</div>

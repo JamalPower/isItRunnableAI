@@ -54,81 +54,203 @@
                 </div>
             </div>
 
-            <!-- Main Insights Grid -->
-            <div class="audit-grid">
-                <div class="audit-section card-hover">
-                    <div class="section-header">
-                        <i class="fa-solid fa-sliders section-icon"></i>
-                        <h3>Best Settings</h3>
-                    </div>
-                    <div class="insight-body">
-                        <div class="info-row">
-                            <span class="label">Target Resolution</span>
-                            <span class="value"><%= (result.bestSettings && result.bestSettings.resolution) || 'N/A' %></span>
+            <!-- Main Insights Grid - GAME SPECIFIC -->
+            <% if (result.appType === 'game') { %>
+                <div class="audit-grid">
+                    <div class="audit-section card-hover">
+                        <div class="section-header">
+                            <i class="fa-solid fa-sliders section-icon"></i>
+                            <h3>Best Settings</h3>
                         </div>
-                        <div class="info-row">
-                            <span class="label">Expected FPS</span>
-                            <span class="value success-text"><%= (result.bestSettings && result.bestSettings.expectedFps) || 'N/A' %></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="audit-section card-hover">
-                    <div class="section-header">
-                        <i class="fa-solid fa-bolt section-icon"></i>
-                        <h3>Performance Est.</h3>
-                    </div>
-                    <div class="insight-body">
-                        <div class="info-row">
-                            <span class="label">System Bottleneck</span>
-                            <span class="value <%= result.bottleneck === 'None' ? 'success-text' : 'warning-text' %>"><%= result.bottleneck || 'N/A' %></span>
-                        </div>
-                        <div class="info-row">
-                            <span class="label">Hardware Match</span>
-                            <span class="value"><%= result.percentage %></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- NEW: Detailed Settings Box below -->
-                <div class="audit-section card-hover full-width">
-                    <div class="section-header">
-                        <i class="fa-solid fa-list-check section-icon"></i>
-                        <h3>Detailed Graphics Configuration</h3>
-                    </div>
-                    <div class="settings-grid">
-                        <% if (result.bestSettings && typeof result.bestSettings.graphicsQuality === 'object') { %>
-                            <% Object.entries(result.bestSettings.graphicsQuality).forEach(([key, val]) => { %>
-                                <div class="mini-setting">
-                                    <span class="s-key"><%= key %></span>
-                                    <span class="s-val"><%= val %></span>
-                                </div>
-                            <% }); %>
-                        <% } else { %>
-                            <div class="mini-setting">
-                                <span class="s-key">Preset</span>
-                                <span class="s-val"><%= result.bestSettings ? result.bestSettings.graphicsQuality : 'N/A' %></span>
+                        <div class="insight-body">
+                            <div class="info-row">
+                                <span class="label">Target Resolution</span>
+                                <span class="value"><%= (result.bestSettings && result.bestSettings.resolution) || 'N/A' %></span>
                             </div>
-                        <% } %>
+                            <div class="info-row">
+                                <span class="label">Expected FPS</span>
+                                <span class="value success-text"><%= (result.bestSettings && result.bestSettings.expectedFps) || 'N/A' %></span>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Explanation Vertical Section -->
-                <div class="audit-section card-hover full-width explanation-section">
-                    <div class="section-header">
-                        <i class="fa-solid fa-microchip section-icon"></i>
-                        <h3>AI Technical Analysis</h3>
+                    <div class="audit-section card-hover">
+                        <div class="section-header">
+                            <i class="fa-solid fa-bolt section-icon"></i>
+                            <h3>Performance Est.</h3>
+                        </div>
+                        <div class="insight-body">
+                            <div class="info-row">
+                                <span class="label">System Bottleneck</span>
+                                <span class="value <%= result.bottleneck === 'None' ? 'success-text' : 'warning-text' %>"><%= result.bottleneck || 'N/A' %></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Hardware Match</span>
+                                <span class="value"><%= result.percentage %></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="explanation-content">
-                        <p class="analysis-text"><%= result.explanation %></p>
+
+                    <!-- Detailed Graphics Settings for Games -->
+                    <div class="audit-section card-hover full-width">
+                        <div class="section-header">
+                            <i class="fa-solid fa-list-check section-icon"></i>
+                            <h3>Detailed Graphics Configuration</h3>
+                        </div>
+                        <div class="settings-grid">
+                            <% if (result.bestSettings && typeof result.bestSettings.graphicsQuality === 'object') { %>
+                                <% Object.entries(result.bestSettings.graphicsQuality).forEach(([key, val]) => { %>
+                                    <div class="mini-setting">
+                                        <span class="s-key"><%= key %></span>
+                                        <span class="s-val"><%= val %></span>
+                                    </div>
+                                <% }); %>
+                            <% } else { %>
+                                <div class="mini-setting">
+                                    <span class="s-key">Preset</span>
+                                    <span class="s-val"><%= result.bestSettings ? result.bestSettings.graphicsQuality : 'N/A' %></span>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Explanation Vertical Section -->
+                    <div class="audit-section card-hover full-width explanation-section">
+                        <div class="section-header">
+                            <i class="fa-solid fa-gamepad section-icon"></i>
+                            <h3>Gaming Analysis</h3>
+                        </div>
+                        <div class="explanation-content">
+                            <p class="analysis-text"><%= result.explanation %></p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            <% } else { %>
+                <!-- APP SPECIFIC DISPLAY -->
+                <div class="audit-grid">
+                    <div class="audit-section card-hover">
+                        <div class="section-header">
+                            <i class="fa-solid fa-gauge section-icon"></i>
+                            <h3>Performance Tier</h3>
+                        </div>
+                        <div class="insight-body">
+                            <div class="info-row">
+                                <span class="label">Expected Performance</span>
+                                <span class="value <%= result.performanceTier === 'Smooth' ? 'success-text' : (result.performanceTier === 'Sluggish' ? 'warning-text' : 'danger-text') %>">
+                                    <%= (result.performanceTier) || 'N/A' %>
+                                </span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Overall Match</span>
+                                <span class="value"><%= result.percentage %></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="audit-section card-hover">
+                        <div class="section-header">
+                            <i class="fa-solid fa-memory section-icon"></i>
+                            <h3>Resource Requirements</h3>
+                        </div>
+                        <div class="insight-body">
+                            <div class="info-row">
+                                <span class="label">Recommended RAM</span>
+                                <span class="value"><%= (result.requirements && result.requirements.recommendedRAM) || 'N/A' %></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">CPU Tier</span>
+                                <span class="value"><%= (result.requirements && result.requirements.cpuTier) || 'N/A' %></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Use Cases for Applications -->
+                    <div class="audit-section card-hover full-width">
+                        <div class="section-header">
+                            <i class="fa-solid fa-tasks section-icon"></i>
+                            <h3>Compatible Use Cases</h3>
+                        </div>
+                        <div class="use-cases-grid">
+                            <% if (result.useCases) { %>
+                                <% if (result.useCases.lightTasks !== undefined) { %>
+                                    <div class="use-case-item">
+                                        <span class="use-case-icon">
+                                            <% if (result.useCases.lightTasks === 'Yes' || result.useCases.lightTasks === true) { %>
+                                                <i class="fa-solid fa-check-circle" style="color: #10b981;"></i>
+                                            <% } else { %>
+                                                <i class="fa-solid fa-times-circle" style="color: #ef4444;"></i>
+                                            <% } %>
+                                        </span>
+                                        <div>
+                                            <span class="use-case-title">Light Tasks</span>
+                                            <span class="use-case-desc">Document editing, web browsing</span>
+                                        </div>
+                                    </div>
+                                <% } %>
+                                <% if (result.useCases.moderateTasks !== undefined) { %>
+                                    <div class="use-case-item">
+                                        <span class="use-case-icon">
+                                            <% if (result.useCases.moderateTasks === 'Yes' || result.useCases.moderateTasks === true) { %>
+                                                <i class="fa-solid fa-check-circle" style="color: #10b981;"></i>
+                                            <% } else { %>
+                                                <i class="fa-solid fa-times-circle" style="color: #ef4444;"></i>
+                                            <% } %>
+                                        </span>
+                                        <div>
+                                            <span class="use-case-title">Moderate Tasks</span>
+                                            <span class="use-case-desc">Photo editing, coding, design</span>
+                                        </div>
+                                    </div>
+                                <% } %>
+                                <% if (result.useCases.heavyTasks !== undefined) { %>
+                                    <div class="use-case-item">
+                                        <span class="use-case-icon">
+                                            <% if (result.useCases.heavyTasks === 'Yes' || result.useCases.heavyTasks === true) { %>
+                                                <i class="fa-solid fa-check-circle" style="color: #10b981;"></i>
+                                            <% } else { %>
+                                                <i class="fa-solid fa-times-circle" style="color: #ef4444;"></i>
+                                            <% } %>
+                                        </span>
+                                        <div>
+                                            <span class="use-case-title">Heavy Tasks</span>
+                                            <span class="use-case-desc">Video editing, 3D rendering</span>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations Section -->
+                    <% if (result.bestSettings && result.bestSettings.recommendations) { %>
+                        <div class="audit-section card-hover full-width">
+                            <div class="section-header">
+                                <i class="fa-solid fa-lightbulb section-icon"></i>
+                                <h3>Optimization Tips</h3>
+                            </div>
+                            <div class="explanation-content">
+                                <p class="analysis-text"><%= result.bestSettings.recommendations %></p>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <!-- Application Analysis -->
+                    <div class="audit-section card-hover full-width explanation-section">
+                        <div class="section-header">
+                            <i class="fa-solid fa-cube section-icon"></i>
+                            <h3>Application Analysis</h3>
+                        </div>
+                        <div class="explanation-content">
+                            <p class="analysis-text"><%= result.explanation %></p>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
 
             <!-- Call to Action -->
             <div class="report-footer">
                 <a href="/check" class="btn-primary-action">
-                    <i class="fa-solid fa-magnifying-glass"></i> Check Another Game
+                    <i class="fa-solid fa-magnifying-glass"></i> Check Another <% if (result.appType === 'game') { %>Game<% } else { %>App<% } %>
                 </a>
                 <button onclick="window.print()" class="btn-glass">
                     <i class="fa-solid fa-download"></i> Save Report

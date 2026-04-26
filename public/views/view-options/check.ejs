@@ -118,6 +118,9 @@
         </div>
     </main>
 
+    <%- include('../partials/error-modal') %>
+
+    <script src="/views/js/error-handler.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const deviceRadios = document.querySelectorAll('input[name="deviceType"]');
@@ -136,13 +139,14 @@
                 });
             });
 
-            // Handle Form Submission
-            hardwareForm.addEventListener('submit', (e) => {
+            // Handle Form Submission with error handling
+            hardwareForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
                 // Disable button and show loading state
                 submitBtn.disabled = true;
                 submitBtn.classList.add('btn-disabled');
+                const originalText = submitBtn.innerHTML;
                 submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Analyzing...';
 
                 const formData = new FormData(e.target);
@@ -151,10 +155,43 @@
                     data[key] = value;
                 });
 
-                // Small delay to ensure the UI updates before navigation
-                setTimeout(() => {
-                    window.location.href = `/check/analyze?data=${encodeURIComponent(JSON.stringify(data))}`;
-                }, 50);
+                try {
+                    // Make API call
+                    const response = await fetch(`/check/analyze?data=${encodeURIComponent(JSON.stringify(data))}`);
+                    
+                    if (!response.ok) {
+                        // Handle API errors
+                        const errorData = await response.json();
+                        throw new Error(errorData.details || errorData.error);
+                    }
+
+                    // Success - navigate to result page
+                    const html = await response.text();
+                    
+                    // Create a temporary container to parse the HTML
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    
+                    // Replace the entire document with the response
+                    document.documentElement.innerHTML = html;
+
+                } catch (error) {
+                    console.error('Analysis error:', error);
+                    errorHandler.showError(
+                        'Analysis Failed',
+                        'Unable to analyze your hardware compatibility.',
+                        error.message,
+                        () => {
+                            // Retry function
+                            hardwareForm.dispatchEvent(new Event('submit'));
+                        }
+                    );
+
+                    // Re-enable button
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('btn-disabled');
+                    submitBtn.innerHTML = originalText;
+                }
             });
 
             // CRITICAL: Re-enable button when user clicks "Back"
@@ -180,5 +217,6 @@
             margin-right: 8px;
         }
     </style>
+
 </body>
 </html>
