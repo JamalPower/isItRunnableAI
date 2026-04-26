@@ -56,6 +56,10 @@ app.get('/performance/analyze', async (req, res) => {
         res.redirect('/performance?error=failed');
     }
 });
-app.listen(port, () => {
-    console.log(`http://localhost:${port}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+        console.log(`http://localhost:${port}`);
+    });
+}
+
+module.exports = app;
