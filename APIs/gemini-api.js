@@ -2,11 +2,17 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const Groq = require("groq-sdk");
 
 const API_KEY = process.env.GEMINI_API_KEY;
-const genAI = new GoogleGenerativeAI(API_KEY);
+if (!API_KEY) {
+    console.warn("Warning: GEMINI_API_KEY not set. Gemini analysis will fail.");
+}
+const genAI = new GoogleGenerativeAI(API_KEY || "");
 
 const groq = new Groq({ 
-    apiKey: process.env.GROQ_API_KEY
+    apiKey: process.env.GROQ_API_KEY || ""
 });
+if (!process.env.GROQ_API_KEY) {
+    console.warn("Warning: GROQ_API_KEY not set. Groq fallback will fail.");
+}
 
 async function callGroq(prompt) {
     const chatCompletion = await groq.chat.completions.create({
@@ -58,8 +64,7 @@ async function analyzeHardware(specs) {
 `;
     try {
         const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = await response.text();
+        const text = result.response.text();
         
         const cleanedText = text.replace(/```json/g, "").replace(/```/g, "").trim();
         return JSON.parse(cleanedText);
@@ -127,8 +132,7 @@ async function analyzePerformance(specs) {
 `;
     try {
         const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = await response.text();
+        const text = result.response.text();
         const cleanedText = text.replace(/```json/g, "").replace(/```/g, "").trim();
         return JSON.parse(cleanedText);
     } catch (error) {

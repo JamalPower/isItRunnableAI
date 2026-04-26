@@ -34,7 +34,7 @@ app.get('/check/analyze', async (req, res) => {
         });
     } catch (error) {
         console.error("Analysis Error:", error);
-        res.redirect('/check?error=failed');
+        res.status(500).redirect('/check?error=failed');
     }
 });
 app.get('/performance', (req, res) => {
@@ -53,7 +53,7 @@ app.get('/performance/analyze', async (req, res) => {
         });
     } catch (error) {
         console.error("Performance Analysis Error:", error);
-        res.redirect('/performance?error=failed');
+        res.status(500).redirect('/performance?error=failed');
     }
 });
 if (process.env.NODE_ENV !== 'production') {
@@ -61,5 +61,11 @@ if (process.env.NODE_ENV !== 'production') {
         console.log(`http://localhost:${port}`);
     });
 }
+
+// Global error handler for unhandled rejections
+app.use((err, req, res, next) => {
+    console.error("Unhandled error:", err);
+    res.status(500).json({ error: "Internal server error" });
+});
 
 module.exports = app;
