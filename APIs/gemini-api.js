@@ -92,7 +92,7 @@ Examples:
         "AntiAliasing": "FXAA/Off",
         "Effects": "Low/Med"
       },
-      "expectedFps": "Expected range (e.g., 30-40 FPS)"
+      "expectedFps": "e.g., 25-30 FPS"
     }
   }
 `;
