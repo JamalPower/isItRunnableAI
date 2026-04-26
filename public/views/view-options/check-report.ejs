@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compatibility Report - isItRunnable AI</title>
+    <link rel="stylesheet" href="/views/css/style.css">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <%- include('../partials/navbar') %>
+
+    <main class="performance-container">
+        <div class="glass-card audit-card">
+            <!-- Top Header Section -->
+            <div class="audit-header">
+                <div class="device-summary">
+                    <div class="badge-row">
+                        <span class="decision-badge badge-<%= result.decision.toLowerCase() %>">
+                            <span class="dot"></span> <%= result.decision === 'YES' ? 'COMPATIBLE' : (result.decision === 'NO' ? 'INCOMPATIBLE' : 'MARGINAL') %>
+                        </span>
+                        <span class="report-id">Check ID: #<%= Math.floor(1000 + Math.random() * 9000) %></span>
+                    </div>
+                    <h1 class="audit-title"><%= specs.targetApp %></h1>
+                    <div class="specs-pill-container">
+                        <span class="spec-pill"><i class="fa-solid fa-microchip icon-sm"></i> <%= specs.cpu %></span>
+                        <span class="spec-pill"><i class="fa-solid fa-desktop icon-sm"></i> <%= specs.gpu %></span>
+                        <span class="spec-pill"><i class="fa-solid fa-memory icon-sm"></i> <%= specs.ram %>GB</span>
+                    </div>
+                </div>
+                <div class="overall-score-wrapper">
+                    <div class="score-circle-container">
+                        <svg viewBox="0 0 36 36" class="circular-chart <%= result.decision.toLowerCase() %>">
+                            <path class="circle-bg" 
+                                  transform="rotate(-90 18 18)"
+                                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="circle" 
+                                  transform="rotate(-90 18 18)"
+                                  stroke-dasharray="100"
+                                  stroke-dashoffset="100"
+                                  style="--target-offset: <%= 100 - parseInt(result.percentage) %>;"
+                                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <text x="18" y="20.35" class="percentage"><%= result.percentage %></text>
+                        </svg>
+                    </div>
+                    <span class="score-label">Match Score</span>
+                </div>
+            </div>
+
+            <!-- Main Insights Grid -->
+            <div class="audit-grid">
+                <div class="audit-section card-hover">
+                    <div class="section-header">
+                        <i class="fa-solid fa-sliders section-icon"></i>
+                        <h3>Best Settings</h3>
+                    </div>
+                    <div class="insight-body">
+                        <div class="info-row">
+                            <span class="label">Target Resolution</span>
+                            <span class="value"><%= (result.bestSettings && result.bestSettings.resolution) || 'N/A' %></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Expected FPS</span>
+                            <span class="value success-text"><%= (result.bestSettings && result.bestSettings.expectedFps) || 'N/A' %></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="audit-section card-hover">
+                    <div class="section-header">
+                        <i class="fa-solid fa-bolt section-icon"></i>
+                        <h3>Performance Est.</h3>
+                    </div>
+                    <div class="insight-body">
+                        <div class="info-row">
+                            <span class="label">System Bottleneck</span>
+                            <span class="value <%= result.bottleneck === 'None' ? 'success-text' : 'warning-text' %>"><%= result.bottleneck || 'N/A' %></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Hardware Match</span>
+                            <span class="value"><%= result.percentage %></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEW: Detailed Settings Box below -->
+                <div class="audit-section card-hover full-width">
+                    <div class="section-header">
+                        <i class="fa-solid fa-list-check section-icon"></i>
+                        <h3>Detailed Graphics Configuration</h3>
+                    </div>
+                    <div class="settings-grid">
+                        <% if (result.bestSettings && typeof result.bestSettings.graphicsQuality === 'object') { %>
+                            <% Object.entries(result.bestSettings.graphicsQuality).forEach(([key, val]) => { %>
+                                <div class="mini-setting">
+                                    <span class="s-key"><%= key %></span>
+                                    <span class="s-val"><%= val %></span>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <div class="mini-setting">
+                                <span class="s-key">Preset</span>
+                                <span class="s-val"><%= result.bestSettings ? result.bestSettings.graphicsQuality : 'N/A' %></span>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Explanation Vertical Section -->
+                <div class="audit-section card-hover full-width explanation-section">
+                    <div class="section-header">
+                        <i class="fa-solid fa-microchip section-icon"></i>
+                        <h3>AI Technical Analysis</h3>
+                    </div>
+                    <div class="explanation-content">
+                        <p class="analysis-text"><%= result.explanation %></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="report-footer">
+                <a href="/check" class="btn-primary-action">
+                    <i class="fa-solid fa-magnifying-glass"></i> Check Another Game
+                </a>
+                <button onclick="window.print()" class="btn-glass">
+                    <i class="fa-solid fa-download"></i> Save Report
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        :root {
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+        }
+
+        .performance-container { padding: 4rem 5%; display: flex; justify-content: center; }
+        
+        .audit-card { 
+            max-width: 950px; 
+            width: 100%; 
+            padding: 3rem !important;
+            animation: slideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+
+        /* Header Styles */
+        .audit-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            margin-bottom: 4rem;
+        }
+
+        .badge-row { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+        
+        .decision-badge {
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        
+        .badge-yes { background: rgba(16, 185, 129, 0.1); color: #059669; }
+        .badge-yes .dot { background: #059669; box-shadow: 0 0 10px #059669; }
+        
+        .badge-marginal { background: rgba(245, 158, 11, 0.1); color: #d97706; }
+        .badge-marginal .dot { background: #d97706; }
+
+        .badge-no { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
+        .badge-no .dot { background: #dc2626; box-shadow: 0 0 10px #dc2626; }
+
+        .report-id { font-size: 0.8rem; color: #94a3b8; font-weight: 600; }
+
+        .audit-title { font-size: 2.8rem; font-weight: 900; color: #0f172a; margin-bottom: 1.5rem; letter-spacing: -1px; }
+
+        .specs-pill-container { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+        .spec-pill {
+            background: #f1f5f9;
+            padding: 0.5rem 1.2rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        /* Score Circle */
+        .overall-score-wrapper { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+        .circular-chart { width: 140px; height: 140px; filter: drop-shadow(0 10px 15px rgba(37, 99, 235, 0.15)); }
+        .circle-bg { fill: none; stroke: #f1f5f9; stroke-width: 4; }
+        .circle { fill: none; stroke-width: 4; stroke-linecap: round; animation: progressAnim 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        
+        .circular-chart.yes .circle { stroke: var(--success); }
+        .circular-chart.marginal .circle { stroke: var(--warning); }
+        .circular-chart.no .circle { stroke: var(--danger); }
+
+        .percentage { fill: #0f172a; font-size: 8px; font-weight: 900; text-anchor: middle; }
+        .score-label { font-size: 0.85rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Grid Sections */
+        .audit-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 3.5rem; }
+        .full-width { grid-column: span 2; }
+        
+        .audit-section {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            background: white;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary-color);
+        }
+
+        .section-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.8rem; }
+        .section-icon { width: 24px; height: 24px; color: var(--primary-color); stroke-width: 2.5; }
+        .section-header h3 { font-size: 1.1rem; font-weight: 800; color: #1e293b; }
+
+        .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .info-row .label { font-size: 0.9rem; color: #64748b; font-weight: 600; }
+        .info-row .value { font-weight: 700; color: #0f172a; }
+
+        /* Settings Layout */
+        .settings-layout { display: flex; flex-direction: column; gap: 2.5rem; }
+        .primary-settings { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        
+        .setting-pill {
+            background: #f8fafc;
+            padding: 1.2rem;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            border: 1px solid rgba(0,0,0,0.03);
+            text-align: center;
+        }
+        .setting-pill .label { font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .setting-pill .value { font-size: 1.2rem; font-weight: 800; color: #1e293b; }
+
+        .detailed-settings { display: flex; flex-direction: column; gap: 1rem; }
+        .settings-title { font-size: 0.9rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .settings-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 1rem; 
+        }
+
+        .mini-setting {
+            background: #f8fafc;
+            padding: 1.2rem 1.8rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.3s ease;
+        }
+        .mini-setting:hover { transform: translateX(5px); background: white; }
+        .s-key { font-size: 0.85rem; font-weight: 700; color: #64748b; }
+        .s-val { font-size: 0.85rem; font-weight: 800; color: var(--primary-color); }
+
+        .success-text { color: var(--success); }
+        .warning-text { color: var(--warning); }
+
+        /* Explanation Section */
+        .explanation-content {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .analysis-text { font-size: 1.1rem; line-height: 1.8; color: #334155; font-weight: 500; }
+
+        /* Icon Styling */
+        .icon-sm, .icon-sm svg { width: 16px; height: 16px; stroke-width: 2.5; }
+        .section-icon, .section-icon svg { width: 24px; height: 24px; color: var(--primary-color); stroke-width: 2.5; }
+        .btn-primary-action svg, .btn-glass svg { width: 18px; height: 18px; }
+
+        /* Footer */
+        .report-footer { display: flex; gap: 1.5rem; justify-content: center; }
+        
+        .btn-primary-action {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+        
+        .btn-primary-action:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(37, 99, 235, 0.3); }
+
+        .btn-glass {
+            background: rgba(255,255,255,0.8);
+            border: 1px solid #e2e8f0;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            color: #475569;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-glass:hover { background: white; color: #0f172a; transform: translateY(-3px); }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(40px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes progressAnim {
+            from { stroke-dashoffset: 100; }
+            to { stroke-dashoffset: var(--target-offset); }
+        }
+
+        @media (max-width: 850px) {
+            .audit-grid { grid-template-columns: 1fr; }
+            .audit-header { flex-direction: column; align-items: center; text-align: center; gap: 3rem; }
+            .audit-title { font-size: 2.2rem; }
+            .specs-pill-container { justify-content: center; }
+        }
+    </style>
+</body>
+</html>

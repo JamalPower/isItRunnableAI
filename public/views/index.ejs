@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>isItRunnable AI - Smart Hardware Compatibility</title>
+    <meta name="description" content="Determine hardware compatibility with demanding games and programs using our AI API.">
+    <link rel="stylesheet" href="/views/css/style.css">
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <%- include('partials/navbar') %>
+
+    <main class="hero">
+        <h1 class="hero-title">Will It Run? Find Out Now.</h1>
+        <p class="hero-description">
+            A smart platform designed to help users—especially those with mid-range and low-end computers—determine their hardware compatibility with demanding games and programs before downloading them. Instead of relying on dry numbers, the project uses AI to analyze technical specifications and provide an accurate, predictive, and human-centered performance report.
+        </p>
+        <button id="startCheckingBtn" class="btn-primary">
+            Start Checking Now
+        </button>
+    </main>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+         const toastContainer = document.getElementById('toastContainer');
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <div class="toast-icon">✓</div>
+                <div style="text-align: left;">
+                    <strong style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem;">Checking Started</strong>
+                    <div style="font-size: 0.9rem; color: #cbd5e1;">We are analyzing your hardware specifications...</div>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+        document.getElementById('startCheckingBtn').addEventListener('click', function() {
+            window.location.href = '/check';
+            toast.classList.add('show');
+
+            // Remove toast after 4 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 4000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Compatibility - isItRunnable AI</title>
+    <link rel="stylesheet" href="/views/css/style.css">
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <!-- Include Navbar -->
+    <%- include('../partials/navbar') %>
+
+    <main class="check-container">
+        <div class="glass-card form-wrapper">
+            <h2 class="form-title">Enter Hardware Details</h2>
+            <p class="form-subtitle">Tell us about your system and what you want to run.</p>
+            
+            <form id="hardwareForm" class="hardware-form">
+                <!-- Target Game/Program -->
+                <div id="targetAppGroup" class="form-group">
+                    <label for="targetApp">What do you want to run?</label>
+                    <input type="text" id="targetApp" name="targetApp" placeholder="e.g. Cyberpunk 2077, Adobe Premiere Pro" required>
+                </div>
+
+                <!-- Device Type Selection -->
+                <div class="form-group">
+                    <label>Device Type</label>
+                    <div class="radio-group">
+                        <label class="radio-card">
+                            <input type="radio" name="deviceType" value="pc" checked>
+                            <span class="radio-content">
+                                <span class="icon">🖥️</span>
+                                Desktop PC
+                            </span>
+                        </label>
+                        <label class="radio-card">
+                            <input type="radio" name="deviceType" value="laptop">
+                            <span class="radio-content">
+                                <span class="icon">💻</span>
+                                Laptop
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Dynamic Fields -->
+                <div id="dynamicFields" class="dynamic-fields">
+                    
+                    <!-- Laptop-only Field (Hidden by default) -->
+                    <div id="laptopOnlyFields" class="form-group hidden">
+                        <label for="laptopModel">Laptop Brand & Model</label>
+                        <input type="text" id="laptopModel" name="laptopModel" placeholder="e.g. Lenovo Legion 5 or ASUS ROG Zephyrus">
+                        <p class="form-note mt-1">Please provide the model, and then specify the hardware details below.</p>
+                    </div>
+
+                    <!-- Common Hardware Fields (Visible for both PC and Laptop) -->
+                    <div id="commonFields" class="device-fields">
+                        <div class="form-group">
+                            <label for="cpu">Processor (CPU)</label>
+                            <input type="text" id="cpu" name="cpu" placeholder="e.g. Intel Core i5-12400F or AMD Ryzen 5 5600X" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gpu">Graphics Card (GPU)</label>
+                            <input type="text" id="gpu" name="gpu" placeholder="e.g. NVIDIA RTX 3060 or AMD RX 6600" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="diskType">Disk Type</label>
+                            <select id="diskType" name="diskType" required>
+                                <option value="" disabled selected>Select Disk Type</option>
+                                <option value="hdd">HDD</option>
+                                <option value="ssd">SSD</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ram">RAM Capacity</label>
+                            <select id="ram" name="ram" required>
+                                <option value="" disabled selected>Select RAM</option>
+                                <option value="0.5">0.5 GB</option>
+                                <option value="1">1 GB</option>
+                                <option value="2">2 GB</option>
+                                <option value="4">4 GB</option>
+                                <option value="8">8 GB</option>
+                                <option value="16">16 GB</option>
+                                <option value="32">32 GB</option>
+                                <option value="64">64+ GB</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="windowVersion">Window version</label>
+                            <select id="windowVersion" name="windowVersion" required>
+                                <option value="" disabled selected>Select Window version</option>
+                                <option value="Windows 10 32-bit">Windows 10 32-bit</option>
+                                <option value="Windows 10 64-bit">Windows 10 64-bit</option>
+                                <option value="Windows 11 64-bit">Windows 11 64-bit</option>
+                                <option value="Windows 8 32-bit">Windows 8 32-bit</option>
+                                <option value="Windows 8 64-bit">Windows 8 64-bit</option>
+                                <option value="Windows 7 32-bit">Windows 7 32-bit</option>
+                                <option value="Windows 7 64-bit">Windows 7 64-bit</option>
+                                <option value="Windows Vista 32-bit">Windows Vista 32-bit</option>
+                                <option value="Windows Vista 64-bit">Windows Vista 64-bit</option>
+                                <option value="Windows XP 32-bit">Windows XP 32-bit</option>
+                                <option value="Windows XP 64-bit">Windows XP 64-bit</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary w-100 mt-4" id="submitBtn">
+                    Analyze Compatibility
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const deviceRadios = document.querySelectorAll('input[name="deviceType"]');
+            const laptopOnlyFields = document.getElementById('laptopOnlyFields');
+            const submitBtn = document.getElementById('submitBtn');
+            const hardwareForm = document.getElementById('hardwareForm');
+
+            // Handle showing/hiding laptop specific fields
+            deviceRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    if (e.target.value === 'laptop') {
+                        laptopOnlyFields.classList.remove('hidden');
+                    } else {
+                        laptopOnlyFields.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Handle Form Submission
+            hardwareForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Disable button and show loading state
+                submitBtn.disabled = true;
+                submitBtn.classList.add('btn-disabled');
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Analyzing...';
+
+                const formData = new FormData(e.target);
+                const data = {};
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
+
+                // Small delay to ensure the UI updates before navigation
+                setTimeout(() => {
+                    window.location.href = `/check/analyze?data=${encodeURIComponent(JSON.stringify(data))}`;
+                }, 50);
+            });
+
+            // CRITICAL: Re-enable button when user clicks "Back"
+            window.addEventListener('pageshow', (event) => {
+                if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('btn-disabled');
+                    submitBtn.innerHTML = 'Analyze Compatibility';
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .btn-disabled {
+            opacity: 0.7;
+            cursor: not-allowed !important;
+            pointer-events: none;
+            filter: grayscale(0.5);
+        }
+        
+        #submitBtn i {
+            margin-right: 8px;
+        }
+    </style>
+</body>
+</html>

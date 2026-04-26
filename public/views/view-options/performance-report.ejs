@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Report - isItRunnable AI</title>
+    <link rel="stylesheet" href="/views/css/style.css">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <%- include('../partials/navbar') %>
+
+    <main class="performance-container">
+        <div class="glass-card audit-card">
+            <!-- Top Header Section -->
+            <div class="audit-header">
+                <div class="device-summary">
+                    <div class="badge-row">
+                        <span class="device-tier badge-<%= result.marketInfo.tier.toLowerCase() %>">
+                            <span class="dot"></span> <%= result.marketInfo.tier %> TIER
+                        </span>
+                        <span class="report-id">Audit ID: #<%= Math.floor(1000 + Math.random() * 9000) %></span>
+                    </div>
+                    <h1 class="audit-title">Hardware Performance Report</h1>
+                    <div class="specs-pill-container">
+                        <span class="spec-pill"><i class="fa-solid fa-microchip icon-sm"></i> <%= specs.cpu %></span>
+                        <span class="spec-pill"><i class="fa-solid fa-desktop icon-sm"></i> <%= specs.gpu %></span>
+                        <span class="spec-pill"><i class="fa-solid fa-memory icon-sm"></i> <%= specs.ram %>GB</span>
+                        <span class="spec-pill"><i class="fa-solid fa-calendar icon-sm"></i> 2026 Audit</span>
+                    </div>
+                </div>
+                <div class="overall-score-wrapper">
+                    <div class="score-circle-container">
+                        <svg viewBox="0 0 36 36" class="circular-chart">
+                            <!-- Increased stroke-width for prominence -->
+                            <path class="circle-bg" 
+                                  transform="rotate(-90 18 18)"
+                                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="circle" 
+                                  transform="rotate(-90 18 18)"
+                                  stroke-dasharray="100"
+                                  stroke-dashoffset="100"
+                                  style="--target-offset: <%= 100 - parseInt(result.overallScore) %>;"
+                                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <text x="18" y="20.35" class="percentage"><%= result.overallScore %>%</text>
+                        </svg>
+                    </div>
+                    <span class="score-label">System Health</span>
+                </div>
+            </div>
+
+            <!-- Main Insights Grid -->
+            <div class="audit-grid">
+                <div class="audit-section card-hover">
+                    <div class="section-header">
+                        <i class="fa-solid fa-chart-line section-icon"></i>
+                        <h3>Performance Breakdown</h3>
+                    </div>
+                    <div class="insight-body">
+                        <div class="metric-group">
+                            <div class="metric-header">
+                                <span>Gaming Score</span>
+                                <span><%= result.gamingScore %>%</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill gaming" style="width: <%= result.gamingScore %>%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-group">
+                            <div class="metric-header">
+                                <span>Productivity Score</span>
+                                <span><%= result.productivityScore %>%</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill productivity" style="width: <%= result.productivityScore %>%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="audit-section card-hover">
+                    <div class="section-header">
+                        <i class="fa-solid fa-rocket section-icon"></i>
+                        <h3>Era Capability</h3>
+                    </div>
+                    <div class="capability-grid">
+                        <div class="capability-item">
+                            <span class="mini-label">Modern Era (2024+)</span>
+                            <p><%= result.eraCapability.modernEra %></p>
+                        </div>
+                        <div class="capability-item">
+                            <span class="mini-label">Legacy Support</span>
+                            <p><%= result.eraCapability.legacySupport %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Benchmarks Section -->
+                <div class="audit-section card-hover full-width">
+                    <div class="section-header">
+                        <i class="fa-solid fa-gamepad section-icon"></i>
+                        <h3>Standard Benchmarks</h3>
+                    </div>
+                    <div class="benchmark-list">
+                        <div class="bench-item">
+                            <div class="bench-info">
+                                <span class="bench-name">4K Ultra Gaming</span>
+                                <span class="bench-desc">Heavy workstation load / AAA 4K</span>
+                            </div>
+                            <span class="rating-tag rating-<%= result.gamingBenchmark.AAA_4K_Ultra.toLowerCase().split(' ')[0] %>">
+                                <%= result.gamingBenchmark.AAA_4K_Ultra %>
+                            </span>
+                        </div>
+                        <div class="bench-item">
+                            <div class="bench-info">
+                                <span class="bench-name">1080p High Gaming</span>
+                                <span class="bench-desc">Standard gaming standard</span>
+                            </div>
+                            <span class="rating-tag rating-<%= result.gamingBenchmark.AAA_1080p_High.toLowerCase().split(' ')[0] %>">
+                                <%= result.gamingBenchmark.AAA_1080p_High %>
+                            </span>
+                        </div>
+                        <div class="bench-item">
+                            <div class="bench-info">
+                                <span class="bench-name">Competitive E-Sports</span>
+                                <span class="bench-desc">High refresh rate potential</span>
+                            </div>
+                            <span class="rating-tag rating-<%= result.gamingBenchmark.Competitive_ESports.toLowerCase().split(' ')[0] %>">
+                                <%= result.gamingBenchmark.Competitive_ESports %>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendation & Upgrade Path -->
+            <div class="recommendation-card">
+                <div class="rec-header">
+                    <i class="fa-solid fa-wrench rec-icon"></i>
+                    <div class="rec-title-group">
+                        <h3>AI Recommendation & Upgrade Path</h3>
+                        <p>Based on 2026 performance standards</p>
+                    </div>
+                </div>
+                <div class="rec-body">
+                    <p class="upgrade-text"><%= result.upgradePath %></p>
+                </div>
+            </div>
+
+            <!-- Report Footer -->
+            <div class="report-footer">
+                <a href="/performance" class="btn-primary-action">
+                    <i class="fa-solid fa-rotate"></i> New Audit
+                </a>
+                <button onclick="window.print()" class="btn-glass">
+                    <i class="fa-solid fa-print"></i> Print Report
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        :root {
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+        }
+
+        .performance-container { padding: 4rem 5%; display: flex; justify-content: center; }
+        
+        .audit-card { 
+            max-width: 950px; 
+            width: 100%; 
+            padding: 3rem !important;
+            animation: slideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+
+        /* Header Styles */
+        .audit-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            margin-bottom: 4rem;
+        }
+
+        .badge-row { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+        
+        .device-tier {
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        
+        .badge-high { background: rgba(59, 130, 246, 0.1); color: #2563eb; }
+        .badge-high .dot { background: #2563eb; box-shadow: 0 0 10px #2563eb; }
+        
+        .badge-mid { background: rgba(16, 185, 129, 0.1); color: #059669; }
+        .badge-mid .dot { background: #059669; box-shadow: 0 0 10px #059669; }
+
+        .badge-entry { background: rgba(245, 158, 11, 0.1); color: #d97706; }
+        .badge-entry .dot { background: #d97706; }
+
+        .report-id { font-size: 0.8rem; color: #94a3b8; font-weight: 600; }
+
+        .audit-title { font-size: 2.8rem; font-weight: 900; color: #0f172a; margin-bottom: 1.5rem; letter-spacing: -1px; }
+
+        .specs-pill-container { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+        .spec-pill {
+            background: #f1f5f9;
+            padding: 0.5rem 1.2rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        /* Score Circle */
+        .overall-score-wrapper { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+        .circular-chart { 
+            width: 140px; 
+            height: 140px; 
+            filter: drop-shadow(0 10px 15px rgba(37, 99, 235, 0.15));
+        }
+        .circle-bg { fill: none; stroke: #f1f5f9; stroke-width: 4; }
+        .circle { 
+            fill: none; 
+            stroke: var(--primary-color); 
+            stroke-width: 4; 
+            stroke-linecap: round; 
+            animation: progressAnim 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; 
+        }
+        .percentage { 
+            fill: #0f172a; 
+            font-size: 8px; /* Use SVG units, not rem */
+            font-weight: 900; 
+            text-anchor: middle;
+        }
+
+        /* Icon Styling */
+        .icon-sm, .icon-sm svg { width: 16px; height: 16px; stroke-width: 2.5; }
+        .section-icon, .section-icon svg { width: 24px; height: 24px; color: var(--primary-color); stroke-width: 2.5; }
+        .rec-icon, .rec-icon svg { width: 40px; height: 40px; color: #3b82f6; stroke-width: 2; }
+        .btn-primary-action svg, .btn-glass svg { width: 18px; height: 18px; }
+        .score-label { font-size: 0.85rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Grid Sections */
+        .audit-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 3.5rem; }
+        .full-width { grid-column: span 2; }
+        
+        .audit-section {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            background: white;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary-color);
+        }
+
+        .section-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.8rem; }
+        .section-icon { width: 24px; height: 24px; color: var(--primary-color); stroke-width: 2.5; }
+        .section-header h3 { font-size: 1.1rem; font-weight: 800; color: #1e293b; }
+
+        .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .info-row .label { font-size: 0.9rem; color: #64748b; font-weight: 600; }
+        .info-row .value { font-weight: 700; color: #0f172a; }
+
+        /* Metric Group */
+        .metric-group { margin-bottom: 1.5rem; }
+        .metric-header { display: flex; justify-content: space-between; margin-bottom: 0.6rem; font-size: 0.85rem; font-weight: 700; color: #475569; }
+        .progress-track { height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 10px; transition: width 1s ease; }
+        .progress-fill.gaming { background: var(--primary-color); }
+        .progress-fill.productivity { background: var(--secondary-color); }
+
+        /* Capability Vertical Layout */
+        .capability-grid { display: flex; flex-direction: column; gap: 1.5rem; }
+        .capability-item { padding: 1.2rem; background: rgba(248, 250, 252, 0.8); border-radius: 15px; border-left: 4px solid var(--primary-color); }
+        .mini-label { font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 0.4rem; display: block; }
+        .capability-item p { font-size: 1rem; font-weight: 600; color: #1e293b; margin: 0; }
+
+        /* Benchmarks - Simple & Attractive */
+        .benchmark-list { display: flex; flex-direction: column; gap: 0.1rem; background: #f8fafc; border-radius: 15px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); }
+        
+        .bench-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: white;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .bench-item:last-child { border-bottom: none; }
+        .bench-item:hover { background: #fdfdfd; padding-left: 2.5rem; }
+
+        .bench-info { display: flex; flex-direction: column; gap: 0.2rem; }
+        .bench-name { font-size: 1rem; font-weight: 800; color: #0f172a; }
+        .bench-desc { font-size: 0.85rem; color: #94a3b8; font-weight: 500; }
+
+        .rating-tag {
+            font-size: 0.85rem;
+            font-weight: 800;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            text-align: center;
+            min-width: 140px;
+        }
+        
+        .rating-excellent { color: #059669; background: #dcfce7; }
+        .rating-good { color: #2563eb; background: #dbeafe; }
+        .rating-playable { color: #d97706; background: #fef3c7; }
+        .rating-none, .rating-struggling { color: #dc2626; background: #fee2e2; }
+
+        /* Recommendation Card */
+        .recommendation-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 24px;
+            padding: 2.5rem;
+            color: white;
+            margin-bottom: 4rem;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+        }
+        
+        .rec-header { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .rec-icon { font-size: 2.5rem; }
+        .rec-title-group h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 0.3rem; color: white; }
+        .rec-title-group p { font-size: 0.9rem; color: #94a3b8; }
+        .upgrade-text { font-size: 1.1rem; line-height: 1.8; color: #cbd5e1; }
+
+        /* Footer */
+        .report-footer { display: flex; gap: 1.5rem; justify-content: center; }
+        
+        .btn-primary-action {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+        
+        .btn-primary-action:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(37, 99, 235, 0.3); }
+
+        .btn-glass {
+            background: rgba(255,255,255,0.8);
+            border: 1px solid #e2e8f0;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            color: #475569;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-glass:hover { background: white; color: #0f172a; transform: translateY(-3px); }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(40px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes progressAnim {
+            from { stroke-dashoffset: 100; }
+            to { stroke-dashoffset: var(--target-offset); }
+        }
+
+        @media (max-width: 850px) {
+            .audit-grid { grid-template-columns: 1fr; }
+            .audit-header { flex-direction: column; align-items: center; text-align: center; gap: 3rem; }
+            .audit-title { font-size: 2.2rem; }
+            .specs-pill-container { justify-content: center; }
+        }
+
+        @media print {
+            .background-shapes, .report-footer, .navbar { display: none !important; }
+            .performance-container { padding: 0; }
+            .audit-card { box-shadow: none; border: none; padding: 0 !important; width: 100%; max-width: 100%; }
+            .recommendation-card { background: white !important; color: black !important; border: 2px solid #000; }
+            .rec-title-group h3, .rec-title-group p, .upgrade-text { color: black !important; }
+        }
+    </style>
+</body>
+</html>
