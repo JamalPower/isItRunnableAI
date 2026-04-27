@@ -1,15 +1,18 @@
     <nav>   
         <div class="logo">  
-            <a href="/" style="text-decoration: none; color: inherit;">
+            <a href="/home" style="text-decoration: none; color: inherit;">
                 <h1 id="nav-title">isItRunnable AI</h1>
             </a>
         </div>
         <div class="menu">
             <ul>
-                <li><a href="/" data-nav-link data-i18n="navHome"  class="<%= currentPage === 'home' ? 'active' : '' %>">Home</a></li>
+                <li><a href="/home" data-nav-link data-i18n="navHome"  class="<%= currentPage === 'home' ? 'active' : '' %>">Home</a></li>
                 <li><a href="/check" data-nav-link data-i18n="navCheck"  class="<%= currentPage === 'check' ? 'active' : '' %>">Check</a></li>
                 <li><a href="/performance" data-nav-link data-i18n="navPerformance"  class="<%= currentPage === 'performance' ? 'active' : '' %>">Performance</a></li>
                 <li><a href="/contact" data-nav-link data-i18n="navContact"  class="<%= currentPage === 'contact' ? 'active' : '' %>">Contact</a></li>
             </ul>
+        </div>
+        <div class="btn-login">
+           <a href="/login" data-nav-link data-i18n="navLogin"  class="<%= currentPage === 'login' ? 'active' : '' %>">Login</a>
         </div>
     </nav>
