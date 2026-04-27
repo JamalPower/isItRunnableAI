@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -37,7 +38,6 @@ app.get('/check/analyze', async (req, res) => {
         });
     } catch (error) {
         console.error("Analysis Error:", error);
-        // Return error as JSON for frontend to display in modal
         res.status(500).json({ 
             error: 'Failed to analyze hardware compatibility',
             details: error.message || 'An unexpected error occurred'
@@ -53,6 +53,14 @@ app.get('/performance/analyze', async (req, res) => {
         const data = JSON.parse(req.query.data);
         const result = await analyzePerformance(data);
         
+        // Check if result contains error from API
+        if (result.decision === "ERROR" || result.error) {
+            return res.status(500).json({ 
+                error: result.explanation || 'Failed to perform performance analysis',
+                details: 'API services are not properly configured'
+            });
+        }
+        
         res.render('view-options/performance-report', {
             result: result,
             specs: data,
@@ -60,7 +68,6 @@ app.get('/performance/analyze', async (req, res) => {
         });
     } catch (error) {
         console.error("Performance Analysis Error:", error);
-        // Return error as JSON for frontend to display in modal
         res.status(500).json({ 
             error: 'Failed to perform performance analysis',
             details: error.message || 'An unexpected error occurred'

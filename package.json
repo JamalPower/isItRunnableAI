@@ -11,6 +11,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node api/app.js",
+    "dev": "node api/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -497,13 +497,16 @@
             constructor(x, y, size, type, vx, vy, color) {
                 this.x = x;
                 this.y = y;
+                this.originX = x;
+                this.originY = y;
                 this.size = size;
                 this.type = type;
                 this.vx = vx;
                 this.vy = vy;
                 this.color = color;
                 this.rotation = Math.random() * Math.PI * 2;
-                this.rotationSpeed = (Math.random() - 0.5) * 0.02;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.01;
+                this.moveRange = 80;
             }
 
             update() {
@@ -511,10 +514,17 @@
                 this.y += this.vy;
                 this.rotation += this.rotationSpeed;
 
-                if (this.x > canvas.width + 100) this.x = -100;
-                if (this.x < -100) this.x = canvas.width + 100;
-                if (this.y > canvas.height + 100) this.y = -100;
-                if (this.y < -100) this.y = canvas.height + 100;
+                const distX = Math.abs(this.x - this.originX);
+                const distY = Math.abs(this.y - this.originY);
+
+                if (distX > this.moveRange) {
+                    this.vx *= -1;
+                    this.x = this.originX + (this.moveRange * Math.sign(this.x - this.originX));
+                }
+                if (distY > this.moveRange) {
+                    this.vy *= -1;
+                    this.y = this.originY + (this.moveRange * Math.sign(this.y - this.originY));
+                }
             }
 
             draw() {
@@ -550,8 +560,8 @@
             const y = Math.random() * canvas.height;
             const size = Math.random() * 60 + 30;
             const type = types[Math.floor(Math.random() * types.length)];
-            const vx = (Math.random() - 0.5) * 0.5;
-            const vy = (Math.random() - 0.5) * 0.5;
+            const vx = (Math.random() - 0.5) * 0.15;
+            const vy = (Math.random() - 0.5) * 0.15;
             const color = colors[Math.floor(Math.random() * colors.length)];
             shapes.push(new GeometricShape(x, y, size, type, vx, vy, color));
         }
