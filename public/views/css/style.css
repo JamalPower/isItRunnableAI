@@ -129,6 +129,11 @@ nav .btn-login a{
     align-items: center;
     gap: 0.5rem;
 }
+.btn-login a:hover{
+    background-color: white;
+    color: var(--primary-color);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
 .logo h1 {
     font-size: 1.6rem;
     font-weight: 800;
