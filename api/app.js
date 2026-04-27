@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -52,14 +51,6 @@ app.get('/performance/analyze', async (req, res) => {
     try {
         const data = JSON.parse(req.query.data);
         const result = await analyzePerformance(data);
-        
-        // Check if result contains error from API
-        if (result.decision === "ERROR" || result.error) {
-            return res.status(500).json({ 
-                error: result.explanation || 'Failed to perform performance analysis',
-                details: 'API services are not properly configured'
-            });
-        }
         
         res.render('view-options/performance-report', {
             result: result,
