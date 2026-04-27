@@ -66,17 +66,12 @@ app.get('/performance/analyze', async (req, res) => {
     }
 });
 
-// Contact Form Handler
 app.post('/contact', (req, res) => {
     try {
         const { name, email, subject, message, category } = req.body;
-
-        // Validation
         if (!name || !email || !subject || !message) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
-
-        // Log the contact message (in production, this would save to database or send email)
         console.log('='.repeat(60));
         console.log('NEW CONTACT MESSAGE');
         console.log('='.repeat(60));
@@ -88,9 +83,6 @@ app.post('/contact', (req, res) => {
         console.log('='.repeat(60));
         console.log(`Received at: ${new Date().toISOString()}`);
         console.log('='.repeat(60));
-
-        // In production, integrate with email service here
-        // Example: await sendEmail({ to: 'support@isitrunnable.ai', ...})
 
         res.status(200).json({ 
             success: true,
