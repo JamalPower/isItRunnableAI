@@ -159,18 +159,28 @@
 
                     const toast = document.createElement('div');
                     toast.className = 'toast show';
-                    toast.style.borderLeft = '4px solid #ef4444';
+                    toast.style.cssText = 'border-left: 4px solid #ef4444; background: #fff5f5; padding: 1.2rem; display: flex; align-items: flex-start; gap: 1rem; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.15); position: relative; overflow: hidden; margin-top: 1rem; transform: translateX(0); transition: opacity 0.3s ease, transform 0.3s ease;';
                     toast.innerHTML = `
-                        <div class="toast-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
-                            <i class="fa-solid fa-circle-exclamation"></i>
+                        <div class="toast-icon" style="background: #fee2e2; color: #ef4444; flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; border: 2px solid #fecaca;">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
                         </div>
-                        <div style="text-align: left;">
-                            <strong style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem; color: #ef4444;">Analysis Failed</strong>
-                            <div style="font-size: 0.9rem; color: #cbd5e1;">${error.message}</div>
+                        <div style="text-align: left; flex: 1;">
+                            <strong style="display: block; font-size: 1.05rem; font-weight: 800; margin-bottom: 0.25rem; color: #991b1b;">Analysis Failed</strong>
+                            <div style="font-size: 0.9rem; color: #7f1d1d; line-height: 1.4;">${error.message}</div>
                         </div>
+                        <button onclick="this.parentElement.style.opacity='0'; setTimeout(()=>this.parentElement.remove(), 300)" style="background: none; border: none; color: #f87171; cursor: pointer; padding: 0.2rem; font-size: 1.2rem; transition: color 0.2s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#f87171'">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                        <div style="position: absolute; bottom: 0; left: 0; height: 4px; background: #ef4444; width: 100%; transition: width 4.8s linear;" id="toastProgress-${Date.now()}"></div>
                     `;
                     
                     toastContainer.appendChild(toast);
+                    
+                    // Trigger progress bar animation
+                    setTimeout(() => {
+                        const progress = toast.querySelector('div[id^="toastProgress-"]');
+                        if(progress) progress.style.width = '0%';
+                    }, 50);
                     
                     setTimeout(() => {
                         toast.classList.remove('show');
