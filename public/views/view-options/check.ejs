@@ -132,7 +132,6 @@
             const submitBtn = document.getElementById('submitBtn');
             const hardwareForm = document.getElementById('hardwareForm');
 
-            // Handle showing/hiding laptop specific fields
             deviceRadios.forEach(radio => {
                 radio.addEventListener('change', (e) => {
                     if (e.target.value === 'laptop') {
@@ -143,11 +142,9 @@
                 });
             });
 
-            // Handle Form Submission with error handling
             hardwareForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
-                // Disable button and show loading state
                 submitBtn.disabled = true;
                 submitBtn.classList.add('btn-disabled');
                 const originalText = submitBtn.innerHTML;
@@ -160,23 +157,17 @@
                 });
 
                 try {
-                    // Make API call
                     const response = await fetch(`/check/analyze?data=${encodeURIComponent(JSON.stringify(data))}`);
                     
                     if (!response.ok) {
-                        // Handle API errors
                         const errorData = await response.json();
                         throw new Error(errorData.details || errorData.error);
                     }
 
-                    // Success - navigate to result page
                     const html = await response.text();
-                    
-                    // Create a temporary container to parse the HTML
                     const tempDiv = document.createElement('div');
                     tempDiv.innerHTML = html;
                     
-                    // Replace the entire document with the response
                     document.documentElement.innerHTML = html;
 
                 } catch (error) {
@@ -186,19 +177,15 @@
                         'Unable to analyze your hardware compatibility.',
                         error.message,
                         () => {
-                            // Retry function
                             hardwareForm.dispatchEvent(new Event('submit'));
                         }
                     );
-
-                    // Re-enable button
                     submitBtn.disabled = false;
                     submitBtn.classList.remove('btn-disabled');
                     submitBtn.innerHTML = originalText;
                 }
             });
 
-            // CRITICAL: Re-enable button when user clicks "Back"
             window.addEventListener('pageshow', (event) => {
                 if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
                     submitBtn.disabled = false;

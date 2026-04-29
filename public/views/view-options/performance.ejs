@@ -126,19 +126,64 @@
                 });
             });
 
-            document.getElementById('performanceForm').addEventListener('submit', (e) => {
+            document.getElementById('performanceForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                submitBtn.innerHTML = 'Analyzing... <span class="spinner"></span>';
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Analyzing...';
                 submitBtn.disabled = true;
 
                 const formData = new FormData(e.target);
                 const data = {};
                 formData.forEach((value, key) => { data[key] = value; });
 
-                window.location.href = `/performance/analyze?data=${encodeURIComponent(JSON.stringify(data))}`;
+                try {
+                    const response = await fetch(`/performance/analyze?data=${encodeURIComponent(JSON.stringify(data))}`);
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.details || errorData.error || `Error Status: ${response.status}`);
+                    }
+
+                    const html = await response.text();
+                    document.documentElement.innerHTML = html;
+                } catch (error) {
+                    console.error('Analysis error:', error);
+                    
+                    let toastContainer = document.getElementById('toastContainer');
+                    if (!toastContainer) {
+                        toastContainer = document.createElement('div');
+                        toastContainer.id = 'toastContainer';
+                        toastContainer.className = 'toast-container';
+                        document.body.appendChild(toastContainer);
+                    }
+
+                    const toast = document.createElement('div');
+                    toast.className = 'toast show';
+                    toast.style.borderLeft = '4px solid #ef4444';
+                    toast.innerHTML = `
+                        <div class="toast-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                        </div>
+                        <div style="text-align: left;">
+                            <strong style="display: block; font-size: 1.1rem; margin-bottom: 0.2rem; color: #ef4444;">Analysis Failed</strong>
+                            <div style="font-size: 0.9rem; color: #cbd5e1;">${error.message}</div>
+                        </div>
+                    `;
+                    
+                    toastContainer.appendChild(toast);
+                    
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                        setTimeout(() => toast.remove(), 300);
+                    }, 5000);
+
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
             });
         });
     </script>
+    <div class="toast-container" id="toastContainer"></div>
 
     <script>
         // Geometric Background Animation
