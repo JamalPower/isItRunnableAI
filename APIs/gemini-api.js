@@ -1,224 +1,288 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const Groq = require("groq-sdk");
 
+// ─────────────────────────────────────────────
+// Initialization
+// ─────────────────────────────────────────────
 const API_KEY = process.env.GEMINI_API_KEY;
 if (!API_KEY) {
-  console.warn("Warning: GEMINI_API_KEY not set. Gemini analysis will fail.");
+  console.warn("⚠️  Warning: GEMINI_API_KEY not set. Gemini analysis will fail.");
 }
+
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+if (!GROQ_API_KEY) {
+  console.warn("⚠️  Warning: GROQ_API_KEY not set. Groq fallback will fail.");
+}
+
 const genAI = new GoogleGenerativeAI(API_KEY || "");
+const groq = new Groq({ apiKey: GROQ_API_KEY || "" });
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || ""
-});
-if (!process.env.GROQ_API_KEY) {
-  console.warn("Warning: GROQ_API_KEY not set. Groq fallback will fail.");
+// ─────────────────────────────────────────────
+// Constants
+// ─────────────────────────────────────────────
+const GEMINI_MODEL   = "gemini-2.0-flash";   // ← اسم النموذج الصحيح
+const GROQ_MODEL     = "llama-3.3-70b-versatile";
+const REQUEST_TIMEOUT_MS = 20000;            // 20 ثانية كحد أقصى
+
+// ─────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────
+
+/**
+ * يستخرج أول كتلة JSON صالحة من النص
+ * أكثر موثوقية من replace() البسيطة
+ */
+function extractJSON(text) {
+  const match = text.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error("No valid JSON block found in API response.");
+  return JSON.parse(match[0]);
 }
 
+/**
+ * يضيف timeout لأي Promise لتجنب التعليق اللانهائي
+ */
+function withTimeout(promise, ms = REQUEST_TIMEOUT_MS) {
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error(`Request timed out after ${ms}ms`)), ms)
+  );
+  return Promise.race([promise, timeout]);
+}
+
+/**
+ * يتحقق من أن الـ specs تحتوي على الحقول الأساسية
+ */
+function validateSpecs(specs, requiredFields) {
+  const missing = requiredFields.filter((f) => !specs[f] || String(specs[f]).trim() === "");
+  if (missing.length > 0) {
+    throw new Error(`Missing required specs fields: ${missing.join(", ")}`);
+  }
+}
+
+/**
+ * يستدعي Groq كـ fallback
+ */
 async function callGroq(prompt) {
-  const chatCompletion = await groq.chat.completions.create({
-    messages: [{ role: "user", content: prompt }],
-    model: "llama-3.3-70b-versatile",
-  });
-  return chatCompletion.choices[0]?.message?.content || "";
+  const completion = await withTimeout(
+    groq.chat.completions.create({
+      messages: [{ role: "user", content: prompt }],
+      model: GROQ_MODEL,
+    })
+  );
+  const text = completion.choices[0]?.message?.content || "";
+  if (!text) throw new Error("Groq returned an empty response.");
+  return text;
 }
 
-async function analyzeHardware(specs) {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+/**
+ * يستدعي Gemini مع fallback تلقائي لـ Groq
+ */
+async function callWithFallback(prompt) {
+  try {
+    const model  = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+    const result = await withTimeout(model.generateContent(prompt));
+    return result.response.text();
+  } catch (geminiError) {
+    console.error("❌ Gemini failed, switching to Groq fallback:", geminiError.message);
+    return await callGroq(prompt);
+  }
+}
 
-  // First, detect if it's a game or application
+// ─────────────────────────────────────────────
+// analyzeHardware
+// ─────────────────────────────────────────────
+async function analyzeHardware(specs) {
+  // التحقق من الحقول المطلوبة
+  validateSpecs(specs, ["targetApp", "deviceType", "cpu", "gpu", "ram"]);
+
+  // ── 1. كشف نوع البرنامج (لعبة أم تطبيق) ──
   const detectionPrompt = `
 Determine if "${specs.targetApp}" is primarily a VIDEO GAME or a SOFTWARE APPLICATION.
-Respond with ONLY a JSON object, no markdown:
+Respond with ONLY a valid JSON object, no markdown, no extra text:
 {
-  "type": "game" or "app",
-  "confidence": "high/medium/low"
+  "type": "game",
+  "confidence": "high"
 }
 
-Examples:
-- "Cyberpunk 2077" → type: "game"
-- "Adobe Premiere Pro" → type: "app"
-- "Microsoft Word" → type: "app"
-- "The Sims 4" → type: "game"
-- "Unity" → type: "app"
+Rules:
+- "game": Any interactive entertainment game (e.g. Cyberpunk 2077, The Sims 4, Minecraft)
+- "app":  Any productivity/creative/utility software (e.g. Adobe Premiere Pro, Microsoft Word, Unity)
 `;
 
-  let appType = "game"; // default
+  let appType = null;
 
   try {
-    const detectionResult = await model.generateContent(detectionPrompt);
-    const detectionText = detectionResult.response.text();
-    const cleanedDetection = detectionText.replace(/```json/g, "").replace(/```/g, "").trim();
-    const detection = JSON.parse(cleanedDetection);
-    appType = detection.type || "game";
+    const detectionText = await callWithFallback(detectionPrompt);
+    const detection = extractJSON(detectionText);
+    if (detection.type === "game" || detection.type === "app") {
+      appType = detection.type;
+    } else {
+      throw new Error("Invalid type value returned.");
+    }
   } catch (e) {
-    console.warn("App type detection failed, defaulting to game");
+    console.warn("⚠️  App type detection failed:", e.message);
+    // نستنتج من اسم البرنامج بدلاً من الـ default العشوائي
+    const appNameLower = specs.targetApp.toLowerCase();
+    const appKeywords  = ["adobe", "word", "excel", "office", "photoshop", "premiere", "unity", "blender", "vs code", "chrome"];
+    appType = appKeywords.some((k) => appNameLower.includes(k)) ? "app" : "game";
+    console.warn(`↩️  Falling back to inferred type: "${appType}"`);
   }
 
-  // Now generate the appropriate analysis based on type
-  let analysisPrompt;
+  // ── 2. بناء الـ prompt المناسب ──
+  const specsSummary = `
+- Device Type: ${specs.deviceType}${specs.laptopModel ? ` (${specs.laptopModel})` : ""}
+- CPU: ${specs.cpu}
+- GPU: ${specs.gpu}
+- RAM: ${specs.ram}
+- Disk Type: ${specs.diskType || "Unknown"}
+- Windows Version: ${specs.windowVersion || "Unknown"}
+`.trim();
 
-  if (appType === "game") {
-    analysisPrompt = `
-  Context: You are a specialized PC Gaming Hardware Analyst and Benchmarking Expert.
-  Goal: Evaluate if a specific game is "Playable" on the provided hardware, focusing on real-world performance benchmarks rather than just official minimum requirements.
+  const gamePrompt = `
+Context: You are a specialized PC Gaming Hardware Analyst and Benchmarking Expert.
+Goal: Evaluate if the game "${specs.targetApp}" is playable on the hardware below.
 
-  Target Game: ${specs.targetApp}
-  Device Specs:
-  - Type: ${specs.deviceType} (${specs.laptopModel || 'N/A'})
-  - CPU: ${specs.cpu}
-  - GPU: ${specs.gpu}
-  - RAM: ${specs.ram}
-  - disk type: ${specs.diskType}
-  - Window Version: ${specs.windowVersion}
+${specsSummary}
 
-  Evaluation Rules:
-  1. "Playable" Definition: If the game can reach 25+ FPS at 720p Lowest settings, the decision should be "YES".
-  2. Integrated GPUs: Be realistic. Many older or integrated GPUs (like Intel HD Graphics) can run modern games at low resolutions even if not officially supported.
-  3. Bottleneck Analysis: Identify if the CPU or GPU is the main limiting factor.
-  4. Accuracy: Use knowledge of game optimization and community benchmarks (e.g., LowSpecExperience).
+Rules:
+1. "Playable" = 25+ FPS at 720p Lowest settings → decision: "YES"
+2. Be realistic with integrated GPUs (Intel HD/UHD can often run games at low res).
+3. Use community benchmarks (LowSpecExperience, Digital Foundry) as reference.
 
-  Output Format (Strict JSON, no markdown):
-  {
-    "appType": "game",
-    "decision": "YES/NO/MARGINAL",
-    "percentage": "0-100%",
-    "explanation": "A concise, human-friendly explanation. Mention if it's officially unsupported but practically playable.",
-    "bottleneck": "CPU/GPU/RAM/None",
-    "bestSettings": {
-      "resolution": "e.g., 1280x720",
-      "graphicsQuality": {
-        "Textures": "Low/Med/High",
-        "Shadows": "On/Off/Low",
-        "AntiAliasing": "FXAA/Off",
-        "Effects": "Low/Med"
-      },
-      "expectedFps": "e.g., 25-30 FPS"
-    }
-  }
-`;
-  } else {
-    analysisPrompt = `
-  Context: You are a Software Compatibility and Performance Analyst specializing in professional applications.
-  Goal: Evaluate if a specific application can run efficiently on the provided hardware, considering CPU requirements, RAM needs, and disk space.
-
-  Target Application: ${specs.targetApp}
-  Device Specs:
-  - Type: ${specs.deviceType} (${specs.laptopModel || 'N/A'})
-  - CPU: ${specs.cpu}
-  - GPU: ${specs.gpu}
-  - RAM: ${specs.ram}
-  - disk type: ${specs.diskType}
-  - Window Version: ${specs.windowVersion}
-
-  Evaluation Focus:
-  1. Sufficient RAM: Minimum comfortable usage memory
-  2. CPU Power: Processing capability for common tasks
-  3. Storage: Space availability for installation and workspace
-  4. Performance Tier: Smooth/Acceptable/Sluggish/Unusable
-
-  Output Format (Strict JSON, no markdown):
-  {
-    "appType": "app",
-    "decision": "YES/NO/MARGINAL",
-    "percentage": "0-100%",
-    "explanation": "Assessment of whether the application will run smoothly. Include notes on performance tier (e.g., 'Smooth for basic editing', 'May lag with large files').",
-    "performanceTier": "Smooth/Acceptable/Sluggish/Unusable",
-    "requirements": {
-      "minRAM": "Minimum RAM needed (e.g., '8 GB')",
-      "recommendedRAM": "Recommended RAM for smooth operation",
-      "cpuTier": "CPU performance level needed (Entry/Mid/High)",
-      "storageSpace": "Typical workspace size (e.g., '50 GB')"
+Respond ONLY with a valid JSON object, no markdown, no extra text:
+{
+  "appType": "game",
+  "decision": "YES",
+  "percentage": 75,
+  "explanation": "...",
+  "bottleneck": "GPU",
+  "bestSettings": {
+    "resolution": "1280x720",
+    "graphicsQuality": {
+      "Textures": "Low",
+      "Shadows": "Off",
+      "AntiAliasing": "Off",
+      "Effects": "Low"
     },
-    "useCases": {
-      "lightTasks": "Yes/No (e.g., document editing, web browsing)",
-      "moderateTasks": "Yes/No (e.g., photo editing, coding)",
-      "heavyTasks": "Yes/No (e.g., video editing, 3D rendering)"
-    },
-    "bottleneck": "CPU/GPU/RAM/Storage/None",
-    "bestSettings": {
-      "ramUtilization": "How much RAM is typically used",
-      "cpuUtilization": "CPU load during typical operation",
-      "recommendations": "Optimization tips (e.g., 'Close background apps', 'Use SSD for faster loading')"
-    }
+    "expectedFps": "25-35 FPS"
   }
+}
 `;
-  }
 
+  const appPrompt = `
+Context: You are a Software Compatibility and Performance Analyst.
+Goal: Evaluate if "${specs.targetApp}" will run efficiently on the hardware below.
+
+${specsSummary}
+
+Focus on:
+1. RAM sufficiency for common tasks.
+2. CPU performance for the app's workload.
+3. Overall performance tier: Smooth / Acceptable / Sluggish / Unusable.
+
+Respond ONLY with a valid JSON object, no markdown, no extra text:
+{
+  "appType": "app",
+  "decision": "YES",
+  "percentage": 80,
+  "explanation": "...",
+  "performanceTier": "Acceptable",
+  "requirements": {
+    "minRAM": "8 GB",
+    "recommendedRAM": "16 GB",
+    "cpuTier": "Mid",
+    "storageSpace": "10 GB"
+  },
+  "useCases": {
+    "lightTasks": "Yes",
+    "moderateTasks": "Yes",
+    "heavyTasks": "No"
+  },
+  "bottleneck": "RAM",
+  "bestSettings": {
+    "ramUtilization": "~6 GB during typical use",
+    "cpuUtilization": "40-60%",
+    "recommendations": "Close background apps. Use SSD for faster load times."
+  }
+}
+`;
+
+  const analysisPrompt = appType === "game" ? gamePrompt : appPrompt;
+
+  // ── 3. تنفيذ التحليل ──
   try {
-    const result = await model.generateContent(analysisPrompt);
-    const text = result.response.text();
+    const responseText  = await callWithFallback(analysisPrompt);
+    const parsedResult  = extractJSON(responseText);
 
-    const cleanedText = text.replace(/```json/g, "").replace(/```/g, "").trim();
-    const parsedResult = JSON.parse(cleanedText);
+    // ضمان صحة الحقول الأساسية
+    parsedResult.appType    = appType;
+    parsedResult.percentage = Number(parsedResult.percentage) || 0;  // تحويل لرقم دائماً
+    parsedResult.decision   = ["YES", "NO", "MARGINAL"].includes(parsedResult.decision)
+      ? parsedResult.decision
+      : "MARGINAL";
 
-    // Ensure appType is set
-    parsedResult.appType = appType;
     return parsedResult;
   } catch (error) {
-    console.error("Gemini API Error, trying Groq fallback:", error);
-    try {
-      const groqResponse = await callGroq(analysisPrompt);
-      const cleanedGroqText = groqResponse.replace(/```json/g, "").replace(/```/g, "").trim();
-      const parsedResult = JSON.parse(cleanedGroqText);
-      parsedResult.appType = appType;
-      return parsedResult;
-    } catch (groqError) {
-      console.error("Groq Fallback Error:", groqError);
-      throw new Error("Analysis services are unavailable. Please try again later.");
-    }
+    console.error("❌ analyzeHardware failed completely:", error.message);
+    throw new Error("Analysis services are unavailable. Please try again later.");
   }
 }
+
+// ─────────────────────────────────────────────
+// analyzePerformance
+// ─────────────────────────────────────────────
 async function analyzePerformance(specs) {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  // التحقق من الحقول المطلوبة
+  validateSpecs(specs, ["cpu", "gpu", "ram", "deviceType"]);
 
   const prompt = `
-  Context: You are a PC Hardware Historian and Performance Auditor.
-  Task: Audit the provided specs to give a technical overview of the device's standing in 2026.
+Context: You are a PC Hardware Historian and Performance Auditor.
+Task: Audit the hardware specs below and give a technical overview of the device's standing in 2026.
 
-  Specs:
-  - CPU: ${specs.cpu}
-  - GPU: ${specs.gpu}
-  - RAM: ${specs.ram}
-  - Device: ${specs.deviceType}
-  - window Version: ${specs.windowVersion}
-  - disk Type: ${specs.diskType}
+Specs:
+- CPU: ${specs.cpu}
+- GPU: ${specs.gpu}
+- RAM: ${specs.ram}
+- Device Type: ${specs.deviceType}
+- Windows Version: ${specs.windowVersion || "Unknown"}
+- Disk Type: ${specs.diskType || "Unknown"}
 
-  Output Format (Strict JSON, no markdown):
-  {
-    "marketInfo": {
-      "tier": "Entry/Mid/High"
-    },
-    "overallScore": "Numeric score 0-100 without %",
-    "gamingScore": "Numeric score 0-100 without %",
-    "productivityScore": "Numeric score 0-100 without %",
-    "eraCapability": {
-      "modernEra": "Brief description of modern era capabilities (2024+)",
-      "legacySupport": "Brief description of legacy support"
-    },
-    "gamingBenchmark": {
-      "AAA_4K_Ultra": "Excellent/Good/Playable/Struggling/None",
-      "AAA_1080p_High": "Excellent/Good/Playable/Struggling/None",
-      "Competitive_ESports": "Excellent/Good/Playable/Struggling/None"
-    },
-    "upgradePath": "string recommendation"
-  }
+Respond ONLY with a valid JSON object, no markdown, no extra text:
+{
+  "marketInfo": {
+    "tier": "Mid"
+  },
+  "overallScore": 60,
+  "gamingScore": 55,
+  "productivityScore": 65,
+  "eraCapability": {
+    "modernEra": "Handles indie titles and light AAA games at low settings.",
+    "legacySupport": "Runs all pre-2018 titles smoothly."
+  },
+  "gamingBenchmark": {
+    "AAA_4K_Ultra": "None",
+    "AAA_1080p_High": "Struggling",
+    "Competitive_ESports": "Good"
+  },
+  "upgradePath": "Consider upgrading RAM to 16 GB and replacing HDD with SSD for noticeable gains."
+}
 `;
+
   try {
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
-    const cleanedText = text.replace(/```json/g, "").replace(/```/g, "").trim();
-    return JSON.parse(cleanedText);
+    const responseText = await callWithFallback(prompt);
+    const result = extractJSON(responseText);
+    
+    result.overallScore      = Number(result.overallScore)      || 0;
+    result.gamingScore       = Number(result.gamingScore)       || 0;
+    result.productivityScore = Number(result.productivityScore) || 0;
+
+    return result;
   } catch (error) {
-    console.error("Gemini Performance Analysis Error, trying Groq fallback:", error);
-    try {
-      const groqResponse = await callGroq(prompt);
-      const cleanedGroqText = groqResponse.replace(/```json/g, "").replace(/```/g, "").trim();
-      return JSON.parse(cleanedGroqText);
-    } catch (groqError) {
-      console.error("Groq Fallback Error (Performance):", groqError);
-      throw new Error("Analysis services are currently down. Please try again later.");
-    }
+    console.error("❌ analyzePerformance failed completely:", error.message);
+    throw new Error("Performance analysis services are currently unavailable. Please try again later.");
   }
 }
 
+// ─────────────────────────────────────────────
+// Exports — نفس الأسماء السابقة حتى يعمل مع المشروع بدون تغيير
+// ─────────────────────────────────────────────
 module.exports = { analyzeHardware, analyzePerformance };
