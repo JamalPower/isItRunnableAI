@@ -21,6 +21,26 @@ app.get('/check', (req, res) => {
 app.get('/contact', (req, res) => {
     res.render('view-options/contact', {currentPage:'contact'});
 });
+
+// --- SEO Routes (Robots & Sitemap) ---
+app.get('/robots.txt', (req, res) => {
+    res.type('text/plain');
+    res.send("User-agent: *\nAllow: /\nSitemap: https://is-it-runnable-ai.vercel.app/sitemap.xml");
+});
+
+app.get('/sitemap.xml', (req, res) => {
+    res.type('application/xml');
+    const baseUrl = 'https://is-it-runnable-ai.vercel.app';
+    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url><loc>${baseUrl}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+    <url><loc>${baseUrl}/check</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+    <url><loc>${baseUrl}/performance</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+    <url><loc>${baseUrl}/contact</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+</urlset>`;
+    res.send(sitemap);
+});
+// -------------------------------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

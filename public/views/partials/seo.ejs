@@ -1,0 +1,29 @@
+<title><%= typeof title !== 'undefined' ? title : 'isItRunnable AI - Smart Hardware Compatibility' %></title>
+<meta name="description" content="<%= typeof description !== 'undefined' ? description : 'Determine your hardware compatibility with demanding games and programs using AI. Find out if it will run before you download.' %>">
+<meta name="keywords" content="<%= typeof keywords !== 'undefined' ? keywords : 'can I run it, system requirements, hardware compatibility check, pc game benchmark, will my pc run this game, AI performance test' %>">
+
+<% if (typeof canonical !== 'undefined') { %>
+<link rel="canonical" href="<%= canonical %>">
+<% } else { %>
+<!-- Fallback canonical, assuming base URL is configured -->
+<link rel="canonical" href="https://is-it-runnable-ai.vercel.app<%= locals.path || '/' %>">
+<% } %>
+
+<!-- Open Graph Meta Tags -->
+<meta property="og:title" content="<%= typeof title !== 'undefined' ? title : 'isItRunnable AI - Smart Hardware Compatibility' %>">
+<meta property="og:description" content="<%= typeof description !== 'undefined' ? description : 'Determine your hardware compatibility with demanding games and programs using AI.' %>">
+<meta property="og:type" content="<%= typeof ogType !== 'undefined' ? ogType : 'website' %>">
+<meta property="og:image" content="<%= typeof ogImage !== 'undefined' ? ogImage : 'https://is-it-runnable-ai.vercel.app/images/logo.png' %>">
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "<%= typeof schemaType !== 'undefined' ? schemaType : 'WebApplication' %>",
+  "name": "isItRunnable AI",
+  "url": "https://is-it-runnable-ai.vercel.app",
+  "description": "An AI-powered platform to check hardware compatibility and performance for games and applications.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any"
+}
+</script>

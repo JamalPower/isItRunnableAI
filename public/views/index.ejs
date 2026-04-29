@@ -3,8 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>isItRunnable AI - Smart Hardware Compatibility</title>
-    <meta name="description" content="Determine hardware compatibility with demanding games and programs using our AI API.">
+    
+    <%- include('partials/seo', {
+        title: typeof title !== 'undefined' ? title : 'isItRunnable AI - Smart Hardware Compatibility',
+        description: typeof description !== 'undefined' ? description : 'Check hardware compatibility with demanding games and programs.',
+        keywords: 'hardware test, run game, system requirements, pc benchmark',
+        canonical: 'https://is-it-runnable-ai.vercel.app/'
+    }) %>
+    
     <link rel="stylesheet" href="/views/css/style.css">
 </head>
 <body>

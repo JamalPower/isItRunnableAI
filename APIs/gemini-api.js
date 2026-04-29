@@ -197,26 +197,21 @@ async function analyzePerformance(specs) {
   Output Format (Strict JSON, no markdown):
   {
     "marketInfo": {
-      "releaseYear": "string",
-      "tier": "Entry/Mid/High",
-      "status": "Legacy/Mainstream/Outdated"
+      "tier": "Entry/Mid/High"
     },
+    "overallScore": "Numeric score 0-100 without %",
+    "gamingScore": "Numeric score 0-100 without %",
+    "productivityScore": "Numeric score 0-100 without %",
     "eraCapability": {
-      "gamingEra": "Up to what year (e.g., 2015-2017)",
-      "appCapability": "e.g., Light Web Apps / Heavy Professional Apps",
-      "osSupport": "Latest Windows/Linux compatibility status"
-    },
-    "powerScores": {
-      "gamingScore": "XX%",
-      "productivityScore": "XX%",
-      "overallPower": "XX%"
+      "modernEra": "Brief description of modern era capabilities (2024+)",
+      "legacySupport": "Brief description of legacy support"
     },
     "gamingBenchmark": {
-      "AAA_Games": "Low/None",
-      "Indie_Games": "Excellent/Good",
-      "Competitive_ESports": "Playable/Struggling"
+      "AAA_4K_Ultra": "Excellent/Good/Playable/Struggling/None",
+      "AAA_1080p_High": "Excellent/Good/Playable/Struggling/None",
+      "Competitive_ESports": "Excellent/Good/Playable/Struggling/None"
     },
-    "upgradePath": "string"
+    "upgradePath": "string recommendation"
   }
 `;
   try {
