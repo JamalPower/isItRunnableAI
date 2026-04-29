@@ -164,18 +164,7 @@ Examples:
       return parsedResult;
     } catch (groqError) {
       console.error("Groq Fallback Error:", groqError);
-      return {
-        appType: appType,
-        decision: "ERROR",
-        percentage: "0%",
-        explanation: "Both AI services (Gemini & Groq) are currently unavailable. Please check your internet connection or API limits.",
-        bottleneck: "Unknown",
-        bestSettings: {
-          resolution: "N/A",
-          graphicsQuality: "N/A",
-          expectedFps: "N/A"
-        }
-      };
+      throw new Error("Both analysis services (Gemini & Groq) are currently unavailable. Please check your internet connection or API limits.");
     }
   }
 }
@@ -227,22 +216,7 @@ async function analyzePerformance(specs) {
       return JSON.parse(cleanedGroqText);
     } catch (groqError) {
       console.error("Groq Fallback Error (Performance):", groqError);
-      return { 
-        marketInfo: { tier: "Error" },
-        overallScore: "0",
-        gamingScore: "0",
-        productivityScore: "0",
-        eraCapability: {
-          modernEra: "Service Unavailable",
-          legacySupport: "Service Unavailable"
-        },
-        gamingBenchmark: {
-          AAA_4K_Ultra: "None",
-          AAA_1080p_High: "None",
-          Competitive_ESports: "None"
-        },
-        upgradePath: "Both analysis services (Gemini & Groq) are currently down. Please try again later."
-      };
+      throw new Error("Both analysis services (Gemini & Groq) are currently down. Please try again later.");
     }
   }
 }
