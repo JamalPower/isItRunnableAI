@@ -164,7 +164,7 @@ Examples:
       return parsedResult;
     } catch (groqError) {
       console.error("Groq Fallback Error:", groqError);
-      throw new Error("Both analysis services (Gemini & Groq) are currently unavailable. Please check your internet connection or API limits.");
+      throw new Error("Analysis services are unavailable. Please try again later.");
     }
   }
 }
@@ -216,7 +216,7 @@ async function analyzePerformance(specs) {
       return JSON.parse(cleanedGroqText);
     } catch (groqError) {
       console.error("Groq Fallback Error (Performance):", groqError);
-      throw new Error("Both analysis services (Gemini & Groq) are currently down. Please try again later.");
+      throw new Error("Analysis services are currently down. Please try again later.");
     }
   }
 }
