@@ -227,7 +227,22 @@ async function analyzePerformance(specs) {
       return JSON.parse(cleanedGroqText);
     } catch (groqError) {
       console.error("Groq Fallback Error (Performance):", groqError);
-      return { decision: "ERROR", explanation: "Both analysis services are currently down." };
+      return { 
+        marketInfo: { tier: "Error" },
+        overallScore: "0",
+        gamingScore: "0",
+        productivityScore: "0",
+        eraCapability: {
+          modernEra: "Service Unavailable",
+          legacySupport: "Service Unavailable"
+        },
+        gamingBenchmark: {
+          AAA_4K_Ultra: "None",
+          AAA_1080p_High: "None",
+          Competitive_ESports: "None"
+        },
+        upgradePath: "Both analysis services (Gemini & Groq) are currently down. Please try again later."
+      };
     }
   }
 }
