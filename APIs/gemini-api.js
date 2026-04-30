@@ -231,7 +231,6 @@ Respond ONLY with a valid JSON object, no markdown, no extra text:
 // analyzePerformance
 // ─────────────────────────────────────────────
 async function analyzePerformance(specs) {
-  // التحقق من الحقول المطلوبة
   validateSpecs(specs, ["cpu", "gpu", "ram", "deviceType"]);
 
   const prompt = `
@@ -270,7 +269,7 @@ Respond ONLY with a valid JSON object, no markdown, no extra text:
   try {
     const responseText = await callWithFallback(prompt);
     const result = extractJSON(responseText);
-    
+
     result.overallScore      = Number(result.overallScore)      || 0;
     result.gamingScore       = Number(result.gamingScore)       || 0;
     result.productivityScore = Number(result.productivityScore) || 0;
@@ -278,11 +277,8 @@ Respond ONLY with a valid JSON object, no markdown, no extra text:
     return result;
   } catch (error) {
     console.error("❌ analyzePerformance failed completely:", error.message);
-    throw new Error("Performance analysis services are currently unavailable. Please try again later.");
+    throw new Error("Performance analysis services are unavailable. Please try again later.");
   }
 }
 
-// ─────────────────────────────────────────────
-// Exports — نفس الأسماء السابقة حتى يعمل مع المشروع بدون تغيير
-// ─────────────────────────────────────────────
 module.exports = { analyzeHardware, analyzePerformance };

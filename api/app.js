@@ -21,6 +21,9 @@ app.get('/check', (req, res) => {
 app.get('/contact', (req, res) => {
     res.render('view-options/contact', {currentPage:'contact'});
 });
+app.get('/login', (req, res) => {
+    res.render('view-options/login', {currentPage:'login'});
+});
 
 // --- SEO Routes (Robots & Sitemap) ---
 app.get('/robots.txt', (req, res) => {
@@ -42,7 +45,7 @@ app.get('/sitemap.xml', (req, res) => {
 });
 // -------------------------------------
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true}));
 
 
 app.get('/check/analyze', async (req, res) => {
