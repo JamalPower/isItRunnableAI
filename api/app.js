@@ -123,10 +123,10 @@ if (process.env.NODE_ENV !== 'production') {
     });
 }
 
-// -----------global error handler for unhandled rejections-------------------------
+// -----------global error handler for unhandled rejections------------------------
 app.use((err, req, res, next) => {
     console.error("Unhandled error:", err);
     res.status(500).json({ error: "Internal server error" });
 });
-//------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
 module.exports = app;
