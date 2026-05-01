@@ -23,12 +23,12 @@ async function fetchTrendingGames(){
             }
         });
         var next_max_links = [];
-        $('nav[aria-label="Pages"]').each((i, el) => {
+        $('nav[aria-label="Pages" class="pagy nav"]').each((i, el) => {
             next_max_links.push($(el).find('a').text());
         });
         const data = {
             data: games,
-            next_max: next_max_links[next_max_links.length - 1]
+            next_max: next_max_links[next_max_links.length - 2] + `[${String(next_max_links.length)}]`
         }
         return data;
     } catch (error) {
@@ -60,12 +60,12 @@ async function fetchTopRatedGames(){
             }
         });
         var next_max_links = [];
-        $('nav[aria-label="Pages"]').each((i, el) => {
+        $('nav[aria-label="Pages" class="pagy nav"]').each((i, el) => {
             next_max_links.push($(el).find('a').text());
         });
         const data = {
             data: games,
-            next_max: next_max_links[next_max_links.length - 1]
+            next_max: next_max_links[next_max_links.length - 2] + `[${String(next_max_links.length)}]`
         }
         return data;
     } catch (error) {
@@ -94,12 +94,12 @@ async function fetchPopularGames() {
             }
         });
         var next_max_links = [];
-        $('nav[aria-label="Pages"]').each((i, el) => {
+        $('nav[aria-label="Pages" class="pagy nav"]').each((i, el) => {
             next_max_links.push($(el).find('a').text());
         });
         const data = {
             data: games,
-            next_max: next_max_links[next_max_links.length - 1]
+            next_max: next_max_links[next_max_links.length - 2] + `[${String(next_max_links.length)}]`
         }
         return data;
     } catch (error) {
@@ -130,12 +130,14 @@ async function fetchReleaseGames(UpOrDown = 'desc') {
             }
         });
         var next_max_links = [];
-        $('nav[aria-label="Pages"]').each((i, el) => {
-            next_max_links.push($(el).find('a').text());
+        $('nav[aria-label="Pages" class="pagy nav"]').each((i, el) => {
+            next_max_links.push(
+                $(el).find('a').text()
+            );
         });
         const data = {
             data: games,
-            next_max: next_max_links[next_max_links.length - 1]
+            next_max: next_max_links[next_max_links.length - 2] + `[${String(next_max_links.length)}]`
         }
         return data;
     } catch (error) {
