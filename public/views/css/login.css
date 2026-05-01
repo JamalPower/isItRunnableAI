@@ -220,6 +220,7 @@
 .login-field {
     display: flex;
     flex-direction: column;
+    width: 100%;
     gap: 0.35rem;
 }
 
