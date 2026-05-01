@@ -40,12 +40,14 @@ async function fetchTopRatedGames(){
             const name = $(el).find('.game-text-centered').text().trim();
             const href = $(el).find('a').attr('href');
             const imgSrc = $(el).find('.overflow-wrapper img').attr('src');
+            const rating = $(el).find('.mb-0').text().trim();
             
             if (name && href) {
                 games.push({
                     name: name,
                     link: BASE_URL + href,
-                    img: imgSrc || ''
+                    img: imgSrc || '',
+                    rating: rating
                 });
             }
         });
@@ -66,14 +68,12 @@ async function fetchPopularGames() {
             const name = $(el).find('.game-text-centered').text().trim();
             const href = $(el).find('a').attr('href');
             const imgSrc = $(el).find('.overflow-wrapper img').attr('src');
-            const rating = $(el).find('.mb-0').text().trim();
             
             if (name && href) {
                 games.push({
                     name: name,
                     link: BASE_URL + href,
-                    img: imgSrc || '',
-                    rating: rating
+                    img: imgSrc || ''
                 });
             }
         });
