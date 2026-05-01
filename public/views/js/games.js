@@ -10,22 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize
     fetchGames(currentCategory, currentPage);
 
-    // Search Listener
-    const gameSearch = document.getElementById('gameSearch');
-    gameSearch.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        const gameItems = document.querySelectorAll('.game-item');
-        
-        gameItems.forEach(item => {
-            const title = item.querySelector('.game-title').textContent.toLowerCase();
-            if (title.includes(term)) {
-                item.style.display = 'flex';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    });
-
     // Tab Listeners
     tabs.forEach(tab => {
         tab.addEventListener('click', (e) => {
@@ -33,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
             e.target.classList.add('active');
             currentCategory = e.target.dataset.category;
             currentPage = 1; 
-            gameSearch.value = ''; // Reset search on tab change
             fetchGames(currentCategory, currentPage);
         });
     });
@@ -62,58 +45,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderShimmer() {
-        gamesGrid.innerHTML = Array.from({length: 6}).map(() => `
+        gamesGrid.innerHTML = Array.from({length: 12}).map(() => `
             <div class="shimmer-item shimmer"></div>
         `).join('');
     }
 
     function renderGames(games, category) {
         if (!games || games.length === 0) {
-            gamesGrid.innerHTML = `<div style="text-align: center; padding: 3rem; color: var(--text-secondary);">No games found.</div>`;
+            gamesGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-secondary);">No games found.</div>`;
             return;
         }
 
         gamesGrid.innerHTML = games.map(game => {
-            let detailLabel = '';
-            let detailIcon = '';
+            let metaHtml = '';
             
             if (category === 'top-rated' && game.rating) {
-                detailLabel = game.rating;
-                detailIcon = 'fa-star';
+                metaHtml = `<div class="game-info-badge"><i class="fa-solid fa-star" style="color: #fbbf24;"></i> ${game.rating}</div>`;
             } else if (category === 'release' && game.year) {
-                detailLabel = game.year;
-                detailIcon = 'fa-calendar';
+                metaHtml = `<div class="game-info-badge"><i class="fa-solid fa-calendar"></i> ${game.year}</div>`;
             } else if (category === 'trending') {
-                detailLabel = 'Trending';
-                detailIcon = 'fa-fire';
-            } else {
-                detailLabel = 'Popular';
-                detailIcon = 'fa-heart';
+                metaHtml = `<div class="game-info-badge"><i class="fa-solid fa-fire" style="color: #ef4444;"></i> Trending</div>`;
+            } else if (category === 'popular') {
+                metaHtml = `<div class="game-info-badge"><i class="fa-solid fa-heart" style="color: #ec4899;"></i> Popular</div>`;
             }
 
             const placeholder = `https://via.placeholder.com/264x352/1e293b/ffffff?text=No+Cover`;
 
             return `
-                <div class="game-item">
-                    <div class="game-img-wrapper">
-                        <img src="${game.img || placeholder}" alt="${game.name}" class="game-img" onerror="this.src='${placeholder}'">
-                    </div>
-                    <div class="game-info">
+                <a href="${game.link}" target="_blank" class="game-item">
+                    ${metaHtml}
+                    <img src="${game.img || placeholder}" alt="${game.name}" class="game-img" onerror="this.src='${placeholder}'">
+                    <div class="game-overlay">
                         <h3 class="game-title">${game.name}</h3>
-                        <div class="hover-prompt">Hover to reveal name</div>
-                        <div class="game-meta-row">
-                            <span class="game-badge">
-                                <i class="fa-solid ${detailIcon}"></i> ${detailLabel}
-                            </span>
-                            <span class="game-badge">
-                                <i class="fa-solid fa-desktop"></i> PC
-                            </span>
-                        </div>
                     </div>
-                    <a href="/check?game=${encodeURIComponent(game.name)}" class="check-btn">
-                        Check Now <i class="fa-solid fa-chevron-right"></i>
-                    </a>
-                </div>
+                </a>
             `;
         }).join('');
     }
