@@ -2,6 +2,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const BASE_URL = 'https://backloggd.com';
 
+//trending - popular -  topRated - release
 async function fetchTrendingGames(page = 1){
     try {
         const targetUrl = `${BASE_URL}/games/lib/trending/release_platform:win?page=${String(page)}`;

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games - isItRunnable AI</title>
+    
+    <%- include('../partials/seo', {
+        title: 'Discover Games — isItRunnable AI',
+        description: 'Browse trending, popular, top-rated, and upcoming games to check their hardware requirements and compatibility.',
+        keywords: 'games, hardware requirements, trending games, top-rated games, isItRunnable AI',
+        canonical: 'https://is-it-runnable-ai.vercel.app/games'
+    }) %>
+
+    <link rel="stylesheet" href="/views/css/style.css">
+    <link rel="stylesheet" href="/views/css/games.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <!-- Geometric Background Canvas -->
+    <canvas id="geometricBackground" class="geometric-canvas"></canvas>
+
+    <%- include('../partials/navbar') %>
+
+    <main class="games-container">
+        <div class="glass-card games-card">
+            <!-- Header & Controls -->
+            <div class="games-header">
+                <h1>Discover Games</h1>
+                <div class="category-tabs">
+                    <button class="tab-btn active" data-category="trending">Trending</button>
+                    <button class="tab-btn" data-category="popular">Popular</button>
+                    <button class="tab-btn" data-category="top-rated">Top Rated</button>
+                    <button class="tab-btn" data-category="release">New Releases</button>
+                </div>
+            </div>
+
+            <!-- Games Grid -->
+            <div id="gamesGrid" class="games-grid">
+                <!-- Shimmer placeholders or actual game items will be injected here via JS -->
+            </div>
+
+            <!-- Pagination -->
+            <div id="paginationContainer" class="pagination-container">
+                <!-- Pagination buttons will be injected here via JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Unified Animation Script -->
+    <script src="/views/js/plexus.js"></script>
+    
+    <!-- Games Fetch and Render Logic -->
+    <script src="/views/js/games.js"></script>
+</body>
+</html>

@@ -125,7 +125,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.get('/games', async (req, res) => {
-   
+   res.render('view-options/games', {currentPage: 'games'});
 });
 app.get('/games/trending', async (req, res) => {
     const page = req.query.page || 1;
