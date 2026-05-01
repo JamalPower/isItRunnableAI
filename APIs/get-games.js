@@ -22,7 +22,15 @@ async function fetchTrendingGames(){
                 });
             }
         });
-        return games;
+        var next_max_links = [];
+        $('nav[aria-label="Pages"]').each((i, el) => {
+            next_max_links.push($(el).find('a').text());
+        });
+        const data = {
+            data: games,
+            next_max: next_max_links[next_max_links.length - 1]
+        }
+        return data;
     } catch (error) {
         console.error("Error fetching trending games:", error);
         return [];
@@ -51,7 +59,15 @@ async function fetchTopRatedGames(){
                 });
             }
         });
-        return games;
+        var next_max_links = [];
+        $('nav[aria-label="Pages"]').each((i, el) => {
+            next_max_links.push($(el).find('a').text());
+        });
+        const data = {
+            data: games,
+            next_max: next_max_links[next_max_links.length - 1]
+        }
+        return data;
     } catch (error) {
         console.error("Error fetching top rated games:", error);
         return [];
@@ -77,7 +93,15 @@ async function fetchPopularGames() {
                 });
             }
         });
-        return games;
+        var next_max_links = [];
+        $('nav[aria-label="Pages"]').each((i, el) => {
+            next_max_links.push($(el).find('a').text());
+        });
+        const data = {
+            data: games,
+            next_max: next_max_links[next_max_links.length - 1]
+        }
+        return data;
     } catch (error) {
         console.error("Error fetching popular games:", error);
         return [];
@@ -105,7 +129,15 @@ async function fetchReleaseGames(UpOrDown = 'desc') {
                 });
             }
         });
-        return games;
+        var next_max_links = [];
+        $('nav[aria-label="Pages"]').each((i, el) => {
+            next_max_links.push($(el).find('a').text());
+        });
+        const data = {
+            data: games,
+            next_max: next_max_links[next_max_links.length - 1]
+        }
+        return data;
     } catch (error) {
         console.error("Error fetching upcoming games:", error);
         return [];
