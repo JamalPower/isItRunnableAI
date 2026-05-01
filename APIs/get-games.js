@@ -5,8 +5,8 @@ const BASE_URL = 'https://backloggd.com';
 async function fetchTrendingGames(){
     try {
         const targetUrl = `${BASE_URL}/games/lib/trending`;
-        const url = `https://bypass-cloudflare-production.up.railway.app/?url=${encodeURIComponent(targetUrl)}&apiKey=${process.env.BYPASS_API_KEY}`;
-        const response = await axios.get(url);
+        // const url = `https://bypass-cloudflare-production.up.railway.app/?url=${encodeURIComponent(targetUrl)}&apiKey=${process.env.BYPASS_API_KEY}`;
+        const response = await axios.get(targetUrl);
         const $ = cheerio.load(response.data);
         const games = [];
         $('.col-cus-5').each((i, el) => {
