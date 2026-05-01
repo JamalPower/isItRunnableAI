@@ -3,6 +3,7 @@ const path = require('path');
 const app = express();
 
 const { analyzeHardware, analyzePerformance } = require('../APIs/gemini-api');
+const {fetchTrendingGames, fetchTopRatedGames} = require('../APIs/get-games');
 const port = 3000;
 
 app.set('view engine', 'ejs');
@@ -122,6 +123,28 @@ if (process.env.NODE_ENV !== 'production') {
         console.log(`http://localhost:${port}`);
     });
 }
+
+app.get('/games', async (req, res) => {
+   
+});
+app.get('/games/trending', async (req, res) => {
+   try {
+    const games = await fetchTrendingGames();
+    res.json(games);
+   } catch (error) {
+    console.error("Trending games error:", error);
+    res.status(500).json({ error: 'Failed to fetch trending games' });
+   }
+});
+app.get('/games/top-rated', async (req, res) => {
+   try {
+    const games = await fetchTopRatedGames();
+    res.json(games);
+   } catch (error) {
+    console.error("Top rated games error:", error);
+    res.status(500).json({ error: 'Failed to fetch top rated games' });
+   }
+});
 
 // -----------global error handler for unhandled rejections------------------------
 app.use((err, req, res, next) => {
