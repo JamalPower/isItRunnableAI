@@ -1,20 +1,3 @@
-/**
- * Toast Notification Component
- * 
- * Reusable toast notification class extracted from the project's existing toast design.
- * Supports multiple types: 'error' (red) and 'success' (blue).
- * 
- * Usage:
- *   Toast.show({ type: 'error', title: 'Analysis Failed', message: 'Something went wrong.' });
- *   Toast.show({ type: 'success', title: 'Done!', message: 'Your report is ready.' });
- * 
- * Options:
- *   type     - 'error' | 'success'  (default: 'success')
- *   title    - Bold heading text
- *   message  - Description text
- *   duration - Auto-dismiss time in ms (default: 5000)
- */
-
 class Toast {
 
     // Color palettes for each toast type
@@ -58,14 +41,15 @@ class Toast {
     static show({ type = 'success', title = '', message = '', duration = 5000 } = {}) {
         const theme = Toast.themes[type] || Toast.themes.success;
 
-        // Ensure container exists
+        // Ensure container exists with proper fixed positioning
         let container = document.getElementById('toastContainer');
         if (!container) {
             container = document.createElement('div');
             container.id = 'toastContainer';
-            container.className = 'toast-container';
             document.body.appendChild(container);
         }
+        // Always enforce positioning (matches original .toast-container CSS)
+        container.style.cssText = 'position: fixed; bottom: 2rem; right: 2rem; z-index: 1000;';
 
         const progressId = `toastProgress-${Date.now()}`;
 
