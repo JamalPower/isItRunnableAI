@@ -128,8 +128,9 @@ app.get('/games', async (req, res) => {
    
 });
 app.get('/games/trending', async (req, res) => {
+    const page = req.query.page || 1;
    try {
-    const games = await fetchTrendingGames();
+    const games = await fetchTrendingGames(page);
     res.json(games);
    } catch (error) {
     console.error("Trending games error:", error);
@@ -137,8 +138,9 @@ app.get('/games/trending', async (req, res) => {
    }
 });
 app.get('/games/top-rated', async (req, res) => {
+    const page = req.query.page || 1;
    try {
-    const games = await fetchTopRatedGames();
+    const games = await fetchTopRatedGames(page);
     res.json(games);
    } catch (error) {
     console.error("Top rated games error:", error);
@@ -146,8 +148,9 @@ app.get('/games/top-rated', async (req, res) => {
    }
 });
 app.get('/games/popular', async (req, res) => {
+    const page = req.query.page || 1;
    try {
-    const games = await fetchPopularGames();
+    const games = await fetchPopularGames(page);
     res.json(games);
    } catch (error) {
     console.error("Popular games error:", error);
@@ -156,8 +159,9 @@ app.get('/games/popular', async (req, res) => {
 });
 app.get('/games/release', async (req, res) => {
     const UpOrDown = req.query.order || 'desc';
+    const page = req.query.page || 1;
    try {
-    const games = await fetchReleaseGames(UpOrDown);
+    const games = await fetchReleaseGames(UpOrDown, page);
     res.json(games);
    } catch (error) {
     console.error("Release games error:", error);

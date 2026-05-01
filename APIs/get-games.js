@@ -2,9 +2,9 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const BASE_URL = 'https://backloggd.com';
 
-async function fetchTrendingGames(){
+async function fetchTrendingGames(page = 1){
     try {
-        const targetUrl = `${BASE_URL}/games/lib/trending/release_platform:win`;
+        const targetUrl = `${BASE_URL}/games/lib/trending/release_platform:win?page=${String(page)}`;
         const url = `https://bypass-cloudflare-production.up.railway.app/?url=${encodeURIComponent(targetUrl)}&apiKey=${process.env.BYPASS_API_KEY}`;
         const response = await axios.get(url);
         const $ = cheerio.load(response.data);
@@ -22,14 +22,17 @@ async function fetchTrendingGames(){
                 });
             }
         });
-        var next_max_links = [];
-        $('nav[aria-label="Pages" class="pagy nav"]').each((i, el) => {
-            next_max_links.push($(el).find('a').text());
+        let next_max = 1;
+        $('nav.pagy a').each((i, el) => {
+            const pageNum = parseInt($(el).text().trim(), 10);
+            if (!isNaN(pageNum) && pageNum > next_max) {
+                next_max = pageNum;
+            }
         });
         const data = {
             data: games,
-            next_max: next_max_links[next_max_links.length - 2] + `[${String(next_max_links.length)}]`
-        }
+            next_max: next_max
+        };
         return data;
     } catch (error) {
         console.error("Error fetching trending games:", error);
@@ -37,9 +40,9 @@ async function fetchTrendingGames(){
     }
 }
 
-async function fetchTopRatedGames(){
+async function fetchTopRatedGames(page = 1){
     try {
-        const targetUrl = `${BASE_URL}/games/lib/rating/release_platform:win`;
+        const targetUrl = `${BASE_URL}/games/lib/rating/release_platform:win?page=${String(page)}`;
         const url = `https://bypass-cloudflare-production.up.railway.app/?url=${encodeURIComponent(targetUrl)}&apiKey=${process.env.BYPASS_API_KEY}`;
         const response = await axios.get(url);
         const $ = cheerio.load(response.data);
@@ -59,23 +62,26 @@ async function fetchTopRatedGames(){
                 });
             }
         });
-        var next_max_links = [];
-        $('nav[aria-label="Pages" class="pagy nav"]').each((i, el) => {
-            next_max_links.push($(el).find('a').text());
+        let next_max = 1;
+        $('nav.pagy a').each((i, el) => {
+            const pageNum = parseInt($(el).text().trim(), 10);
+            if (!isNaN(pageNum) && pageNum > next_max) {
+                next_max = pageNum;
+            }
         });
         const data = {
             data: games,
-            next_max: next_max_links[next_max_links.length - 2] + `[${String(next_max_links.length)}]`
-        }
+            next_max: next_max
+        };
         return data;
     } catch (error) {
         console.error("Error fetching top rated games:", error);
         return [];
     }
 }
-async function fetchPopularGames() {
+async function fetchPopularGames(page = 1) {
     try {
-        const targetUrl = `${BASE_URL}/games/lib/popular/release_platform:win`;
+        const targetUrl = `${BASE_URL}/games/lib/popular/release_platform:win?page=${String(page)}`;
         const url = `https://bypass-cloudflare-production.up.railway.app/?url=${encodeURIComponent(targetUrl)}&apiKey=${process.env.BYPASS_API_KEY}`;
         const response = await axios.get(url);
         const $ = cheerio.load(response.data);
@@ -93,23 +99,26 @@ async function fetchPopularGames() {
                 });
             }
         });
-        var next_max_links = [];
-        $('nav[aria-label="Pages" class="pagy nav"]').each((i, el) => {
-            next_max_links.push($(el).find('a').text());
+        let next_max = 1;
+        $('nav.pagy a').each((i, el) => {
+            const pageNum = parseInt($(el).text().trim(), 10);
+            if (!isNaN(pageNum) && pageNum > next_max) {
+                next_max = pageNum;
+            }
         });
         const data = {
             data: games,
-            next_max: next_max_links[next_max_links.length - 2] + `[${String(next_max_links.length)}]`
-        }
+            next_max: next_max
+        };
         return data;
     } catch (error) {
         console.error("Error fetching popular games:", error);
         return [];
     }
 }
-async function fetchReleaseGames(UpOrDown = 'desc') {
+async function fetchReleaseGames(UpOrDown = 'desc', page = 1) {
     try {
-        const targetUrl = `${BASE_URL}/games/lib/release:${UpOrDown}/release_platform:win`;
+        const targetUrl = `${BASE_URL}/games/lib/release:${UpOrDown}/release_platform:win?page=${String(page)}`;
         const url = `https://bypass-cloudflare-production.up.railway.app/?url=${encodeURIComponent(targetUrl)}&apiKey=${process.env.BYPASS_API_KEY}`;
         const response = await axios.get(url);
         const $ = cheerio.load(response.data);
@@ -129,16 +138,17 @@ async function fetchReleaseGames(UpOrDown = 'desc') {
                 });
             }
         });
-        var next_max_links = [];
-        $('nav[aria-label="Pages" class="pagy nav"]').each((i, el) => {
-            next_max_links.push(
-                $(el).find('a').text()
-            );
+        let next_max = 1;
+        $('nav.pagy a').each((i, el) => {
+            const pageNum = parseInt($(el).text().trim(), 10);
+            if (!isNaN(pageNum) && pageNum > next_max) {
+                next_max = pageNum;
+            }
         });
         const data = {
             data: games,
-            next_max: next_max_links[next_max_links.length - 2] + `[${String(next_max_links.length)}]`
-        }
+            next_max: next_max
+        };
         return data;
     } catch (error) {
         console.error("Error fetching upcoming games:", error);
