@@ -124,15 +124,13 @@
                     </div>
 
                     <form id="signupForm" class="login-form" novalidate>
-                        <div class="signup-name-row">
-                            <div class="login-field">
-                                <label for="signupUserName">User Name</label>
-                                <div class="input-wrapper">
-                                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                                    <input type="text" id="signupUserName" name="userName" placeholder="User Name" autocomplete="given-name" required>
-                                </div>
-                                <span class="field-error" id="signupUserNameError"></span>
+                        <div class="login-field">
+                            <label for="signupUserName">User Name</label>
+                            <div class="input-wrapper">
+                                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                <input type="text" id="signupUserName" name="userName" placeholder="User Name" autocomplete="username" required>
                             </div>
+                            <span class="field-error" id="signupUserNameError"></span>
                         </div>
 
                         <div class="login-field">
@@ -310,7 +308,7 @@
             const tm = document.getElementById('agreeTerms');
 
             // Reset
-            ['userNameError','signupEmailError','signupPasswordError','confirmPasswordError','termsError'].forEach(id => document.getElementById(id).textContent = '');
+            ['signupUserNameError','signupEmailError','signupPasswordError','confirmPasswordError','termsError'].forEach(id => document.getElementById(id).textContent = '');
             [fn, em, pw, cp].forEach(el => el.parentElement.classList.remove('error'));
 
             if (!fn.value.trim()) { document.getElementById('signupUserNameError').textContent = 'Required'; fn.parentElement.classList.add('error'); valid = false; }
