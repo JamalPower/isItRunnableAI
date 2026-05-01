@@ -3,7 +3,7 @@ const path = require('path');
 const app = express();
 
 const { analyzeHardware, analyzePerformance } = require('../APIs/gemini-api');
-const {fetchTrendingGames, fetchTopRatedGames} = require('../APIs/get-games');
+const {fetchTrendingGames, fetchTopRatedGames,fetchPopularGames,fetchReleaseGames} = require('../APIs/get-games');
 const port = 3000;
 
 app.set('view engine', 'ejs');

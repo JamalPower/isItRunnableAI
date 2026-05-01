@@ -112,4 +112,4 @@ async function fetchReleaseGames(UpOrDown = 'desc') {
     }
 }
 
-module.exports = {fetchTrendingGames,fetchTopRatedGames,fetchPopularGames,fetchUpcomingGames}
+module.exports = {fetchTrendingGames,fetchTopRatedGames,fetchPopularGames,fetchReleaseGames}
