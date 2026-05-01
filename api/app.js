@@ -145,6 +145,25 @@ app.get('/games/top-rated', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch top rated games' });
    }
 });
+app.get('/games/popular', async (req, res) => {
+   try {
+    const games = await fetchPopularGames();
+    res.json(games);
+   } catch (error) {
+    console.error("Popular games error:", error);
+    res.status(500).json({ error: 'Failed to fetch popular games' });
+   }
+});
+app.get('/games/release', async (req, res) => {
+    const UpOrDown = req.query.order || 'desc';
+   try {
+    const games = await fetchReleaseGames(UpOrDown);
+    res.json(games);
+   } catch (error) {
+    console.error("Release games error:", error);
+    res.status(500).json({ error: 'Failed to fetch release games' });
+   }
+});
 
 // -----------global error handler for unhandled rejections------------------------
 app.use((err, req, res, next) => {
