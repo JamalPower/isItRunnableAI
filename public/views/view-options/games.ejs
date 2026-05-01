@@ -23,18 +23,42 @@
         <div class="shape shape-3"></div>
     </div>
 
-    <!-- Geometric Background Canvas -->
     <canvas id="geometricBackground" class="geometric-canvas"></canvas>
 
     <%- include('../partials/navbar') %>
 
     <main class="games-container">
         <div class="glass-card games-card">
+
             <!-- Header & Controls -->
             <div class="games-header">
                 <h1>Discover Games</h1>
-                <p>Browse through our AI-curated library of titles to check your system's compatibility and performance potential.</p>
-                
+                <p>Browse our AI-curated library and instantly check if your system can handle it.</p>
+
+                <!-- Stats Strip -->
+                <div class="games-stats-strip">
+                    <div class="stat-chip">
+                        <i class="fa-solid fa-gamepad"></i>
+                        <span><strong>500K+</strong> Games Tracked</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-chip">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span><strong>Instant</strong> AI Analysis</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-chip">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span><strong>4</strong> Categories</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-chip">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span><strong>Free</strong> to Check</span>
+                    </div>
+                </div>
+
+                <!-- Search -->
                 <div class="search-section">
                     <div class="search-wrapper">
                         <i class="fa-solid fa-magnifying-glass search-icon"></i>
@@ -42,30 +66,66 @@
                     </div>
                 </div>
 
+                <!-- Category Tabs -->
                 <div class="category-tabs">
-                    <button class="tab-btn active" data-category="trending">Trending</button>
-                    <button class="tab-btn" data-category="popular">Popular</button>
-                    <button class="tab-btn" data-category="top-rated">Top Rated</button>
-                    <button class="tab-btn" data-category="release">New Releases</button>
+                    <button class="tab-btn active" data-category="trending">
+                        <i class="fa-solid fa-fire"></i> Trending
+                    </button>
+                    <button class="tab-btn" data-category="popular">
+                        <i class="fa-solid fa-heart"></i> Popular
+                    </button>
+                    <button class="tab-btn" data-category="top-rated">
+                        <i class="fa-solid fa-star"></i> Top Rated
+                    </button>
+                    <button class="tab-btn" data-category="release">
+                        <i class="fa-solid fa-calendar-days"></i> New Releases
+                    </button>
                 </div>
             </div>
 
-            <!-- Games Grid -->
-            <div id="gamesGrid" class="games-grid">
-                <!-- Shimmer placeholders or actual game items will be injected here via JS -->
+            <!-- How It Works Strip -->
+            <div class="how-it-works-strip">
+                <div class="hiw-step">
+                    <div class="hiw-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <div class="hiw-text">
+                        <strong>1. Find a Game</strong>
+                        <span>Browse or search the library</span>
+                    </div>
+                </div>
+                <div class="hiw-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="hiw-step">
+                    <div class="hiw-icon"><i class="fa-solid fa-computer"></i></div>
+                    <div class="hiw-text">
+                        <strong>2. Click "Can I Run It?"</strong>
+                        <span>Your specs are pre-filled</span>
+                    </div>
+                </div>
+                <div class="hiw-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="hiw-step">
+                    <div class="hiw-icon"><i class="fa-solid fa-robot"></i></div>
+                    <div class="hiw-text">
+                        <strong>3. Get AI Report</strong>
+                        <span>FPS, settings & bottlenecks</span>
+                    </div>
+                </div>
             </div>
 
-            <!-- Pagination -->
-            <div id="paginationContainer" class="pagination-container">
-                <!-- Pagination buttons will be injected here via JS -->
+            <!-- Results Info Bar -->
+            <div class="results-info-bar" id="resultsInfoBar">
+                <span id="resultsCount"><i class="fa-solid fa-spinner fa-spin"></i> Loading games...</span>
+                <span class="results-category-label" id="resultsCategoryLabel">Trending</span>
             </div>
+
+            <!-- Games Grid -->
+            <div id="gamesGrid" class="games-grid"></div>
+
+            <!-- Pagination -->
+            <div id="paginationContainer" class="pagination-container"></div>
+
         </div>
     </main>
 
-    <!-- Unified Animation Script -->
     <script src="/views/js/plexus.js"></script>
-    
-    <!-- Games Fetch and Render Logic -->
     <script src="/views/js/games.js"></script>
 </body>
 </html>

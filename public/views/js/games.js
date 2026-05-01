@@ -1,11 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const gamesGrid = document.getElementById('gamesGrid');
-    const paginationContainer = document.getElementById('paginationContainer');
-    const tabs = document.querySelectorAll('.tab-btn');
-    
+    const gamesGrid          = document.getElementById('gamesGrid');
+    const paginationContainer= document.getElementById('paginationContainer');
+    const resultsCount       = document.getElementById('resultsCount');
+    const resultsCategoryLabel = document.getElementById('resultsCategoryLabel');
+    const tabs               = document.querySelectorAll('.tab-btn');
+
     let currentCategory = 'trending';
-    let currentPage = 1;
-    let maxPage = 1;
+    let currentPage     = 1;
+    let maxPage         = 1;
+
+    const categoryLabels = {
+        trending:   'Trending Now',
+        popular:    'Most Popular',
+        'top-rated':'Top Rated',
+        release:    'New Releases'
+    };
 
     // Initialize
     fetchGames(currentCategory, currentPage);
@@ -14,97 +23,151 @@ document.addEventListener('DOMContentLoaded', () => {
     tabs.forEach(tab => {
         tab.addEventListener('click', (e) => {
             tabs.forEach(t => t.classList.remove('active'));
-            e.target.classList.add('active');
-            currentCategory = e.target.dataset.category;
-            currentPage = 1; 
+            e.currentTarget.classList.add('active');
+            currentCategory = e.currentTarget.dataset.category;
+            currentPage = 1;
             fetchGames(currentCategory, currentPage);
+            if (resultsCategoryLabel) {
+                resultsCategoryLabel.textContent = categoryLabels[currentCategory] || currentCategory;
+            }
         });
     });
 
     async function fetchGames(category, page) {
         renderShimmer();
-        paginationContainer.innerHTML = ''; 
-        
+        paginationContainer.innerHTML = '';
+        if (resultsCount) resultsCount.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
+
         try {
             const response = await fetch(`/games/${category}?page=${page}`);
             if (!response.ok) throw new Error('Failed to fetch data');
             const result = await response.json();
-            
+
             maxPage = result.next_max || 1;
             renderGames(result.data, category);
             renderPagination();
+
+            const count = result.data ? result.data.length : 0;
+            if (resultsCount) {
+                resultsCount.innerHTML = `<i class="fa-solid fa-check-circle" style="color:var(--accent-color)"></i> Showing <strong>${count}</strong> games &mdash; Page ${page} of ${maxPage}`;
+            }
         } catch (error) {
             console.error(error);
+            if (resultsCount) resultsCount.textContent = 'Failed to load';
             gamesGrid.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; color: var(--error-color); padding: 3rem;">
-                    <i class="fa-solid fa-circle-exclamation fa-3x mb-3"></i>
-                    <h2 style="margin-top: 1rem;">Failed to load games</h2>
-                    <p>Please check your connection and try again later.</p>
+                <div style="grid-column:1/-1; text-align:center; color:var(--error-color); padding:3rem;">
+                    <i class="fa-solid fa-circle-exclamation fa-3x"></i>
+                    <h2 style="margin-top:1rem;">Failed to load games</h2>
+                    <p>Please check your connection and try again.</p>
                 </div>`;
         }
     }
 
     function renderShimmer() {
         gamesGrid.innerHTML = Array.from({length: 12}).map(() => `
-            <div class="shimmer-item shimmer"></div>
+            <div class="shimmer-item">
+                <div class="shimmer-img shimmer"></div>
+                <div class="shimmer-footer">
+                    <div class="shimmer-line shimmer"></div>
+                    <div class="shimmer-line short shimmer"></div>
+                </div>
+            </div>
         `).join('');
+    }
+
+    function getBadgeHtml(category, game) {
+        switch (category) {
+            case 'top-rated':
+                return game.rating
+                    ? `<div class="game-info-badge"><i class="fa-solid fa-star" style="color:#fbbf24"></i> ${game.rating}</div>`
+                    : '';
+            case 'release':
+                return game.year
+                    ? `<div class="game-info-badge"><i class="fa-solid fa-calendar"></i> ${game.year}</div>`
+                    : '';
+            case 'trending':
+                return `<div class="game-info-badge"><i class="fa-solid fa-fire" style="color:#ef4444"></i> Hot</div>`;
+            case 'popular':
+                return `<div class="game-info-badge"><i class="fa-solid fa-heart" style="color:#ec4899"></i> Popular</div>`;
+            default:
+                return '';
+        }
+    }
+
+    function getMetaTag(category, game) {
+        if (category === 'top-rated' && game.rating) {
+            return `<span class="game-meta-tag">⭐ ${game.rating}</span>`;
+        }
+        if (category === 'release' && game.year) {
+            return `<span class="game-meta-secondary">${game.year}</span>`;
+        }
+        if (category === 'trending') {
+            return `<span class="game-meta-tag">🔥 Trending</span>`;
+        }
+        if (category === 'popular') {
+            return `<span class="game-meta-tag">❤️ Popular</span>`;
+        }
+        return '';
     }
 
     function renderGames(games, category) {
         if (!games || games.length === 0) {
-            gamesGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-secondary);">No games found.</div>`;
+            gamesGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem; color:var(--text-secondary);">No games found.</div>`;
             return;
         }
 
-        gamesGrid.innerHTML = games.map(game => {
-            let metaHtml = '';
-            
-            if (category === 'top-rated' && game.rating) {
-                metaHtml = `<div class="game-info-badge"><i class="fa-solid fa-star" style="color: #fbbf24;"></i> ${game.rating}</div>`;
-            } else if (category === 'release' && game.year) {
-                metaHtml = `<div class="game-info-badge"><i class="fa-solid fa-calendar"></i> ${game.year}</div>`;
-            } else if (category === 'trending') {
-                metaHtml = `<div class="game-info-badge"><i class="fa-solid fa-fire" style="color: #ef4444;"></i> Trending</div>`;
-            } else if (category === 'popular') {
-                metaHtml = `<div class="game-info-badge"><i class="fa-solid fa-heart" style="color: #ec4899;"></i> Popular</div>`;
-            }
+        const placeholder = `https://via.placeholder.com/264x352/1e293b/ffffff?text=No+Cover`;
 
-            const placeholder = `https://via.placeholder.com/264x352/1e293b/ffffff?text=No+Cover`;
+        gamesGrid.innerHTML = games.map(game => {
+            const checkUrl  = `/check?game=${encodeURIComponent(game.name)}`;
+            const badgeHtml = getBadgeHtml(category, game);
+            const metaTag   = getMetaTag(category, game);
 
             return `
-                <a href="${game.link}" target="_blank" class="game-item">
-                    ${metaHtml}
-                    <img src="${game.img || placeholder}" alt="${game.name}" class="game-img" onerror="this.src='${placeholder}'">
-                    <div class="game-overlay">
-                        <h3 class="game-title">${game.name}</h3>
+                <div class="game-item">
+                    <!-- Image area -->
+                    <div class="game-img-wrapper">
+                        ${badgeHtml}
+                        <img
+                            src="${game.img || placeholder}"
+                            alt="${game.name}"
+                            class="game-img"
+                            loading="lazy"
+                            onerror="this.src='${placeholder}'"
+                        >
+                        <!-- Hover CTA overlay -->
+                        <div class="game-cta-overlay">
+                            <a href="${checkUrl}" class="game-cta-btn" onclick="event.stopPropagation()">
+                                <i class="fa-solid fa-play"></i> Can I Run It?
+                            </a>
+                        </div>
                     </div>
-                </a>
+
+                    <!-- Always-visible footer -->
+                    <a href="${game.link}" target="_blank" rel="noopener noreferrer" class="game-card-footer" style="text-decoration:none;">
+                        <span class="game-title">${game.name}</span>
+                        <div class="game-meta-row">
+                            ${metaTag}
+                        </div>
+                    </a>
+                </div>
             `;
         }).join('');
     }
 
     function renderPagination() {
-        if (maxPage <= 1) {
-            paginationContainer.innerHTML = '';
-            return;
-        }
+        if (maxPage <= 1) { paginationContainer.innerHTML = ''; return; }
 
         let html = '';
-        
-        // Prev button
         html += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})"><i class="fa-solid fa-chevron-left"></i></button>`;
 
-        // Smart pagination range
         let startPage = Math.max(1, currentPage - 2);
-        let endPage = Math.min(maxPage, startPage + 4);
-        
-        if (endPage - startPage < 4) {
-            startPage = Math.max(1, endPage - 4);
-        }
+        let endPage   = Math.min(maxPage, startPage + 4);
+        if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
 
         if (startPage > 1) {
             html += `<button class="page-btn" onclick="changePage(1)">1</button>`;
-            if (startPage > 2) html += `<span class="page-ellipsis">...</span>`;
+            if (startPage > 2) html += `<span class="page-ellipsis">…</span>`;
         }
 
         for (let i = startPage; i <= endPage; i++) {
@@ -112,22 +175,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (endPage < maxPage) {
-            if (endPage < maxPage - 1) html += `<span class="page-ellipsis">...</span>`;
+            if (endPage < maxPage - 1) html += `<span class="page-ellipsis">…</span>`;
             html += `<button class="page-btn" onclick="changePage(${maxPage})">${maxPage}</button>`;
         }
 
-        // Next button
         html += `<button class="page-btn" ${currentPage === maxPage ? 'disabled' : ''} onclick="changePage(${currentPage + 1})"><i class="fa-solid fa-chevron-right"></i></button>`;
 
         paginationContainer.innerHTML = html;
     }
 
-    // Expose to window scope so inline onclick handles it
     window.changePage = (page) => {
         if (page < 1 || page > maxPage || page === currentPage) return;
         currentPage = page;
         fetchGames(currentCategory, currentPage);
-        // Scroll back to the top of the section smoothly
         document.querySelector('.games-header').scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 });

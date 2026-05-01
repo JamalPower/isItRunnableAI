@@ -133,6 +133,9 @@
             const submitBtn = document.getElementById('submitBtn');
             const hardwareForm = document.getElementById('hardwareForm');
 
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('game')) document.getElementById('targetApp').value = params.get('game');
+
             deviceRadios.forEach(radio => {
                 radio.addEventListener('change', (e) => {
                     if (e.target.value === 'laptop') {
