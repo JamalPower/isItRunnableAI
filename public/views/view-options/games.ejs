@@ -50,7 +50,7 @@
                 </div>
                 <div class="stat-square-card">
                     <i class="fa-solid fa-right-left"></i>
-                    <span>Track <strong>Requirements</strong></span>
+                    <span><strong>Track</strong> requirements</span>
                 </div>
                 <div class="stat-square-card">
                     <i class="fa-solid fa-shield-halved"></i>
@@ -140,6 +140,26 @@
                 <!-- Genres will be loaded here -->
             </div>      
         </div>
+        <!--Gaming Resources-->
+        <div class="glass-card gaming-resources-card">
+            <div class="gaming-resources-header">
+                <h1>Gaming Resources</h1>
+                <p>Browse our curated library by genre to find the perfect experience for your hardware.</p>
+            </div>
+            <div class="gaming-resources-grid" id="gamingResourcesGrid">
+                <!-- Gaming Resources will be loaded here -->
+            </div>      
+        </div>
+        <!-- Additional features-->
+         <div class="glass-card additional-features-card">
+            <div class="additional-features-header">
+                <h1>Additional Features</h1>
+                <p>Here are some of the additional features that we offer:</p>
+            </div>
+            <div class="additional-features-grid" id="additionalFeaturesGrid">
+                <!-- Additional Features will be loaded here -->
+            </div>      
+        </div>
     </main>
 
     <script src="/views/js/plexus.js"></script>
@@ -158,9 +178,32 @@
             { name: 'Puzzle', icon: 'fa-solid fa-puzzle-piece' },
             { name: 'Arcade', icon: 'fa-solid fa-gamepad' },
             { name: 'Platformer', icon: 'fa-solid fa-mountain' },
-            { name: 'Fighting', icon: 'fa-solid fa-hand-fist' }
+            { name: 'Fighting', icon: 'fa-solid fa-hand-fist' },
+            { name: 'Brawler', icon: 'fa-solid fa-robot' },
+            { name:'Tactical', icon:'fa-solid fa-chess'}
+            
         ];
-
+        const gamingResources = [
+            { name: 'Steam', icon: 'fa-brands fa-steam', url: 'https://store.steampowered.com/' },
+            { name: 'Epic Games', icon: 'fa-solid fa-bolt', url: 'https://www.epicgames.com/' },
+            { name: 'GOG', icon: 'fa-solid fa-ghost', url: 'https://www.gog.com/' },
+            { name: 'Humble Bundle', icon: 'fa-solid fa-box-open', url: 'https://www.humblebundle.com/' },
+            { name: 'itch.io', icon: 'fa-brands fa-itch-io', url: 'https://itch.io/' },
+            { name: 'PlayStation', icon: 'fa-brands fa-playstation', url: 'https://store.playstation.com/' },
+            { name: 'Xbox', icon: 'fa-brands fa-xbox', url: 'https://www.xbox.com/' },
+            { name: 'Nintendo', icon: 'fa-solid fa-n', url: 'https://www.nintendo.com/' },
+            { name: 'Microsoft', icon: 'fa-brands fa-microsoft', url: 'https://www.microsoft.com/en-us/store/games' },
+            { name: 'Amazon Games', icon: 'fa-brands fa-amazon', url: 'https://www.amazon.com/gaming' },
+            { name: 'GameStop', icon: 'fa-solid fa-gamepad', url: 'https://www.gamestop.com/' },
+            { name: 'Newegg', icon: 'fa-solid fa-microchip', url: 'https://www.newegg.com/' },
+            { name: 'Best Buy', icon: 'fa-solid fa-tag', url: 'https://www.bestbuy.com/' }
+        ];
+        const additionalFeatures = [
+            { name: 'Check Hardware Compatibility', description:'Check if your hardware is compatible with games', icon: 'fa-solid fa-microchip', url: '/check' },
+            { name: 'Performance test', description:'Test your hardware performance', icon: 'fa-solid fa-chart-line', url: '/performance' },
+            { name: 'Game news', description:'Get latest game news and updates', icon: 'fa-solid fa-newspaper', url: '/news'},
+            { name: 'Game reviews', description:'Get game reviews from critics and users', icon: 'fa-solid fa-star', url: 'https://www.metacritic.com/browse/game/pc/'}
+        ];
         function loadGenres() {
             const grid = document.getElementById('genresGrid');
             if (!grid) return;
@@ -175,12 +218,49 @@
             `).join('');
         }
 
-        document.addEventListener('DOMContentLoaded', loadGenres);
+        function loadGamingResources() {
+            const grid = document.getElementById('gamingResourcesGrid');
+            if (!grid) return;
 
-        // Placeholder for genre filtering logic (to be integrated with games.js if needed)
+            grid.innerHTML = gamingResources.map(res => `
+                <a href="${res.url}" target="_blank" rel="noopener noreferrer" class="resource-item">
+                    <div class="resource-icon-wrapper">
+                        <i class="${res.icon}"></i>
+                    </div>
+                    <span>${res.name}</span>
+                </a>
+            `).join('');
+        }
+
+        function loadAdditionalFeatures() {
+            const grid = document.getElementById('additionalFeaturesGrid');
+            if (!grid) return;
+
+            grid.innerHTML = additionalFeatures.map(feature => `
+                <a href="${feature.url}" class="feature-item">
+                    <div class="feature-icon-wrapper">
+                        <i class="${feature.icon}"></i>
+                    </div>
+                    <div class="feature-text">
+                        <strong>${feature.name}</strong>
+                        <p>${feature.description}</p>
+                    </div>
+                    <div class="feature-arrow">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGenres();
+            loadGamingResources();
+            loadAdditionalFeatures();
+        });
+
         function filterByGenre(genreName) {
             console.log("Filtering by:", genreName);
-            // This would call a function in games.js to update the grid
+            // Integration with games.js
         }
     </script>
 </body>
