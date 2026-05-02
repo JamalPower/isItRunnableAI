@@ -97,6 +97,75 @@
     font-weight: 800;
 }
 
+/* ===== INSTRUCTIONS CARD ===== */
+.instructions-card {
+    text-align: center;
+}
+
+.instructions-header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-color);
+    letter-spacing: -0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.instructions-header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    max-width: 650px;
+    line-height: 1.6;
+    margin: 0 auto 2rem;
+}
+
+.instructions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.instruction-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 1rem;
+}
+
+.instruction-number {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+
+.instruction-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.instruction-content strong {
+    font-size: 1rem;
+    color: var(--text-color);
+    font-weight: 800;
+}
+
+.instruction-content span {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
 /* ===== GAMES LIST CARD ===== */
 .controls-row {
     display: flex;
@@ -167,75 +236,6 @@
     background: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
-}
-
-/* ===== INSTRUCTIONS CARD ===== */
-.instructions-card {
-    text-align: center;
-}
-
-.instructions-header h1 {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: var(--text-color);
-    letter-spacing: -0.5px;
-    margin-bottom: 0.5rem;
-}
-
-.instructions-header p {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    max-width: 650px;
-    line-height: 1.6;
-    margin: 0 auto 2rem;
-}
-
-.instructions-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.instruction-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.2rem;
-    padding: 1rem;
-}
-
-.instruction-number {
-    width: 40px;
-    height: 40px;
-    background: var(--primary-color);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 1.1rem;
-    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
-}
-
-.instruction-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-}
-
-.instruction-content strong {
-    font-size: 1rem;
-    color: var(--text-color);
-    font-weight: 800;
-}
-
-.instruction-content span {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    line-height: 1.4;
 }
 
 /* ===== RESULTS INFO BAR ===== */
@@ -317,14 +317,6 @@
     margin-bottom: 1rem;
 }
 
-/* Keep the CTA button for usability but hide it until hover? 
-   The user said "show only the game name", but they need to click.
-   I'll make the whole overlay clickable.
-*/
-.game-item-link {
-    text-decoration: none;
-}
-
 /* Badge top-right */
 .game-info-badge {
     position: absolute;
@@ -337,6 +329,83 @@
     font-size: 0.7rem;
     font-weight: 700;
     z-index: 1;
+}
+
+/* ===== GENRES SECTION ===== */
+.genres-section-card {
+    text-align: center;
+}
+
+.genres-header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-color);
+    letter-spacing: -0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.genres-header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    max-width: 600px;
+    line-height: 1.6;
+    margin: 0 auto 2.5rem;
+}
+
+.genres-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.genre-item {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.genre-icon-wrapper {
+    width: 32px;
+    height: 32px;
+    background: rgba(59, 130, 246, 0.05);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.genre-item span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.genre-item:hover {
+    transform: translateY(-3px);
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+}
+
+.genre-item:hover .genre-icon-wrapper {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.genre-item:hover span {
+    color: white;
 }
 
 /* ===== PAGINATION ===== */
@@ -405,5 +474,11 @@
     .overview-stats-grid { gap: 1rem; }
     .stat-square-card { padding: 1rem; }
     .games-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-    .how-it-works-strip { display: none; }
+    .genres-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    .genre-item {
+        padding: 0.6rem 0.8rem;
+    }
 }

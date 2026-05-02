@@ -130,9 +130,58 @@
             <!-- Pagination -->
             <div id="paginationContainer" class="pagination-container"></div>
         </div>
+        <!-- Card 4: Genres -->
+        <div class="glass-card genres-section-card">
+            <div class="genres-header">
+                <h1>Games by Genre</h1>
+                <p>Browse our curated library by genre to find the perfect experience for your hardware.</p>
+            </div>
+            <div class="genres-grid" id="genresGrid">
+                <!-- Genres will be loaded here -->
+            </div>      
+        </div>
     </main>
 
     <script src="/views/js/plexus.js"></script>
     <script src="/views/js/games.js"></script>
+    <script>
+        const genresList = [
+            { name: 'Action', icon: 'fa-solid fa-gun' },
+            { name: 'Adventure', icon: 'fa-solid fa-map' },
+            { name: 'RPG', icon: 'fa-solid fa-shield-halved' },
+            { name: 'Strategy', icon: 'fa-solid fa-chess' },
+            { name: 'Shooter', icon: 'fa-solid fa-crosshairs' },
+            { name: 'Racing', icon: 'fa-solid fa-car' },
+            { name: 'Sports', icon: 'fa-solid fa-futbol' },
+            { name: 'Simulation', icon: 'fa-solid fa-vr-cardboard' },
+            { name: 'Indie', icon: 'fa-solid fa-lightbulb' },
+            { name: 'Puzzle', icon: 'fa-solid fa-puzzle-piece' },
+            { name: 'Arcade', icon: 'fa-solid fa-gamepad' },
+            { name: 'Platformer', icon: 'fa-solid fa-mountain' },
+            { name: 'Fighting', icon: 'fa-solid fa-hand-fist' }
+        ];
+
+        function loadGenres() {
+            const grid = document.getElementById('genresGrid');
+            if (!grid) return;
+            
+            grid.innerHTML = genresList.map(genre => `
+                <div class="genre-item" onclick="filterByGenre('${genre.name.toLowerCase()}')">
+                    <div class="genre-icon-wrapper">
+                        <i class="${genre.icon}"></i>
+                    </div>
+                    <span>${genre.name}</span>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', loadGenres);
+
+        // Placeholder for genre filtering logic (to be integrated with games.js if needed)
+        function filterByGenre(genreName) {
+            console.log("Filtering by:", genreName);
+            // This would call a function in games.js to update the grid
+        }
+    </script>
 </body>
 </html>
