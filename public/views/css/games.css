@@ -169,28 +169,74 @@
     border-color: var(--primary-color);
 }
 
-/* ===== HOW IT WORKS STRIP ===== */
-.how-it-works-strip {
+/* ===== INSTRUCTIONS CARD ===== */
+.instructions-card {
+    text-align: center;
+}
+
+.instructions-header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-color);
+    letter-spacing: -0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.instructions-header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    max-width: 650px;
+    line-height: 1.6;
+    margin: 0 auto 2rem;
+}
+
+.instructions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.instruction-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 1rem;
+}
+
+.instruction-number {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    background: rgba(59,130,246,0.03);
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 2rem;
+    font-weight: 800;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
 }
 
-.hiw-step { display: flex; align-items: center; gap: 0.75rem; }
-.hiw-icon {
-    width: 32px; height: 32px; border-radius: 8px;
-    background: var(--primary-color);
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-size: 0.8rem;
+.instruction-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
 }
-.hiw-text strong { font-size: 0.8rem; color: var(--text-color); display: block; }
-.hiw-text span { font-size: 0.72rem; color: var(--text-secondary); }
-.hiw-arrow { color: var(--border-color); font-size: 0.7rem; }
+
+.instruction-content strong {
+    font-size: 1rem;
+    color: var(--text-color);
+    font-weight: 800;
+}
+
+.instruction-content span {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
 
 /* ===== RESULTS INFO BAR ===== */
 .results-info-bar {
@@ -352,6 +398,7 @@
     .controls-row { flex-direction: column; align-items: stretch; }
     .search-section { min-width: 100%; }
     .category-tabs { overflow-x: auto; padding-bottom: 0.5rem; }
+    .instructions-grid { grid-template-columns: 1fr; gap: 1rem; }
 }
 
 @media (max-width: 480px) {
