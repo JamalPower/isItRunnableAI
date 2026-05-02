@@ -66,11 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderShimmer() {
         gamesGrid.innerHTML = Array.from({length: 12}).map(() => `
             <div class="shimmer-item">
-                <div class="shimmer-img shimmer"></div>
-                <div class="shimmer-footer">
-                    <div class="shimmer-line shimmer"></div>
-                    <div class="shimmer-line short shimmer"></div>
-                </div>
+                <div class="shimmer"></div>
             </div>
         `).join('');
     }
@@ -85,29 +81,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return game.year
                     ? `<div class="game-info-badge"><i class="fa-solid fa-calendar"></i> ${game.year}</div>`
                     : '';
-            case 'trending':
-                return `<div class="game-info-badge"><i class="fa-solid fa-fire" style="color:#ef4444"></i> Hot</div>`;
-            case 'popular':
-                return `<div class="game-info-badge"><i class="fa-solid fa-heart" style="color:#ec4899"></i> Popular</div>`;
             default:
                 return '';
         }
-    }
-
-    function getMetaTag(category, game) {
-        if (category === 'top-rated' && game.rating) {
-            return `<span class="game-meta-tag">⭐ ${game.rating}</span>`;
-        }
-        if (category === 'release' && game.year) {
-            return `<span class="game-meta-secondary">${game.year}</span>`;
-        }
-        if (category === 'trending') {
-            return `<span class="game-meta-tag">🔥 Trending</span>`;
-        }
-        if (category === 'popular') {
-            return `<span class="game-meta-tag">❤️ Popular</span>`;
-        }
-        return '';
     }
 
     function renderGames(games, category) {
@@ -121,11 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
         gamesGrid.innerHTML = games.map(game => {
             const checkUrl  = `/check?game=${encodeURIComponent(game.name)}`;
             const badgeHtml = getBadgeHtml(category, game);
-            const metaTag   = getMetaTag(category, game);
 
             return `
-                <div class="game-item">
-                    <!-- Image area -->
+                <a href="${checkUrl}" class="game-item">
                     <div class="game-img-wrapper">
                         ${badgeHtml}
                         <img
@@ -135,22 +109,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             loading="lazy"
                             onerror="this.src='${placeholder}'"
                         >
-                        <!-- Hover CTA overlay -->
-                        <div class="game-cta-overlay">
-                            <a href="${checkUrl}" class="game-cta-btn" onclick="event.stopPropagation()">
-                                <i class="fa-solid fa-play"></i> Can I Run It?
-                            </a>
+                        <div class="game-hover-overlay">
+                            <span class="game-hover-title">${game.name}</span>
                         </div>
                     </div>
-
-                    <!-- Always-visible footer -->
-                    <a href="${game.link}" target="_blank" rel="noopener noreferrer" class="game-card-footer" style="text-decoration:none;">
-                        <span class="game-title">${game.name}</span>
-                        <div class="game-meta-row">
-                            ${metaTag}
-                        </div>
-                    </a>
-                </div>
+                </a>
             `;
         }).join('');
     }
@@ -188,6 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (page < 1 || page > maxPage || page === currentPage) return;
         currentPage = page;
         fetchGames(currentCategory, currentPage);
-        document.querySelector('.games-header').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.querySelector('.games-list-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 });

@@ -28,37 +28,37 @@
     <%- include('../partials/navbar') %>
 
     <main class="games-container">
-        <div class="glass-card games-card">
-
-            <!-- Header & Controls -->
-            <div class="games-header">
-                <h1>Discover Games</h1>
-                <p>Browse our AI-curated library and instantly check if your system can handle it.</p>
-
-                <!-- Stats Strip -->
-                <div class="games-stats-strip">
-                    <div class="stat-chip">
-                        <i class="fa-solid fa-gamepad"></i>
-                        <span><strong>500K+</strong> Games Tracked</span>
-                    </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat-chip">
-                        <i class="fa-solid fa-bolt"></i>
-                        <span><strong>Instant</strong> AI Analysis</span>
-                    </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat-chip">
-                        <i class="fa-solid fa-layer-group"></i>
-                        <span><strong>4</strong> Categories</span>
-                    </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat-chip">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <span><strong>Free</strong> to Check</span>
-                    </div>
+        <!-- Card 1: Overview -->
+        <div class="glass-card overview-card">
+            <div class="overview-header">
+                <h1>Overview</h1>
+                <p>Browse our AI-curated library and instantly check if your system can handle it. Our smart platform analyzes technical specifications to provide accurate performance reports.</p>
+            </div>
+            
+            <div class="overview-stats-grid">
+                <div class="stat-square-card">
+                    <i class="fa-solid fa-gamepad"></i>
+                    <span><strong>500K+</strong> Games Tracked</span>
                 </div>
+                <div class="stat-square-card">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span><strong>Instant</strong> AI Analysis</span>
+                </div>
+                <div class="stat-square-card">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span><strong>4</strong> Categories</span>
+                </div>
+                <div class="stat-square-card">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span><strong>Free</strong> to Check</span>
+                </div>
+            </div>
+        </div>
 
-                <!-- Search -->
+        <!-- Card 2: Games Content -->
+        <div class="glass-card games-list-card">
+            <!-- Combined Search & Tabs -->
+            <div class="controls-row">
                 <div class="search-section">
                     <div class="search-wrapper">
                         <i class="fa-solid fa-magnifying-glass search-icon"></i>
@@ -66,7 +66,6 @@
                     </div>
                 </div>
 
-                <!-- Category Tabs -->
                 <div class="category-tabs">
                     <button class="tab-btn active" data-category="trending">
                         <i class="fa-solid fa-fire"></i> Trending
@@ -83,7 +82,7 @@
                 </div>
             </div>
 
-            <!-- How It Works Strip -->
+            <!-- How It Works Strip (Maintaining previous appearance as requested) -->
             <div class="how-it-works-strip">
                 <div class="hiw-step">
                     <div class="hiw-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
@@ -121,7 +120,6 @@
 
             <!-- Pagination -->
             <div id="paginationContainer" class="pagination-container"></div>
-
         </div>
     </main>
 
