@@ -42,44 +42,59 @@
 }
 
 .overview-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .stat-square-card {
     background: white;
     border: 1px solid var(--border-color);
-    border-radius: 10px; /* Specific 10px */
-    padding: 1.5rem;
+    border-radius: 10px;
+    padding: 1.2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    aspect-ratio: 1/1; /* Square */
-    transition: transform 0.2s ease;
+    gap: 0.75rem;
+    width: 160px; /* Fixed smaller width */
+    height: 160px; /* Fixed smaller height to keep it square */
+    transition: all 0.3s ease;
 }
 
 .stat-square-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.04);
 }
 
 .stat-square-card i {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     color: var(--primary-color);
+    background: rgba(59, 130, 246, 0.05);
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
 }
 
 .stat-square-card span {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
     text-align: center;
+    line-height: 1.4;
 }
 
 .stat-square-card strong {
     display: block;
     color: var(--text-color);
-    font-size: 1rem;
+    font-size: 0.95rem;
+    font-weight: 800;
 }
 
 /* ===== GAMES LIST CARD ===== */
